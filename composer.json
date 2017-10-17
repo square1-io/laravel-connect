@@ -1,0 +1,24 @@
+{
+    "name": "square1ltd/laravel-connect",
+    "description": "Connect to a laravel backend from anywhere",
+    "type": "package",
+    "license": "free",
+    "authors": [
+        {
+            "name": "Roberto Prato",
+            "email": "roberto@square1.io"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.4",
+        "laravel/framework": "^5.4",
+         "laravel/passport": "^3.0"
+    },
+    "require-dev": {
+    },
+     "autoload": {
+        "psr-4": {
+            "Square1\\Laravel\\Connect\\": "src"
+        }
+    }
+}
