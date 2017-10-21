@@ -223,9 +223,9 @@ class MakeClient extends Command
             $inspector = $inspector['inspector'];
             $className = $inspector->className();
             $classPath = $inspector->endpointReference();
-            $repositoryClass = $this->makeRepository($inspector);
             //do not override in case developer wants to use a different class
             if (isset($endpoints[$classPath]) == false) {
+                $repositoryClass = $this->makeRepository($inspector);    
                 $endpoints[$classPath] = $repositoryClass;
             }
         }
@@ -244,7 +244,8 @@ class MakeClient extends Command
         $this->initAndClearFolder($this->baseTmpPath);
         $this->initAndClearFolder($this->baseBuildPath);
      
-        $this->initAndClearFolder($this->baseRepositoriesPath);
+        //do not clear the repository folder is already there
+        $this->initAndClearFolder($this->baseRepositoriesPath, FALSE);
     }
 
 
@@ -300,12 +301,26 @@ class MakeClient extends Command
      *
      * @param  string  $folder
      */
-    public function initAndClearFolder($folder)
+    public function initAndClearFolder($folder, $force = TRUE)
     {
+        $shouldCreate = TRUE;
+        
         if ($this->files->isDirectory($folder) == true) {
-            $this->files->deleteDirectory($folder);
+            
+            if($force)
+            {    
+                $this->files->deleteDirectory($folder);
+            }
+            else 
+            {
+                $shouldCreate = FALSE;
+            }
         }
-        $this->files->makeDirectory($folder, 0755, true);
+        
+        if($shouldCreate == TRUE)
+        {
+            $this->files->makeDirectory($folder, 0755, true);
+        }
     }
 
     
