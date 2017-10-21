@@ -7,6 +7,7 @@ use Square1\Laravel\Connect\Console\MakeClient;
 use Square1\Laravel\Connect\Clients\ClientWriter;
 use Square1\Laravel\Connect\Model\ModelAttribute;
 use Square1\Laravel\Connect\Model\ModelInspector;
+use Square1\Laravel\Connect\Clients\Deploy\GitDeploy;
 
 class AndroidClientWriter extends ClientWriter
 {
@@ -20,9 +21,19 @@ class AndroidClientWriter extends ClientWriter
         $this->info("------ RUNNING ANDROID CLIENT WRITER ------");
 
         $package = config("connect.clients.android.package");
-
+        
+         //prepare Android folder
+        $this->client()->initAndClearFolder($this->client()->baseBuildPath . '/android/');
         $path = $this->buildJavaPackageFolder($package);
 
+        //now that patsh are set prepare git for deploy
+        // pull previous version
+        $git = new GitDeploy(env('ANDROID_GIT_REPO'), 
+                $this->client()->baseBuildPath . '/android/' ,
+                env('ANDROID_GIT_BRANCH') );
+        
+        $git->init();
+        
         $tableMap  = array_merge(array(), $this->client()->tableMap);
          
         foreach ($this->client()->classMap as $classMap) {
@@ -37,11 +48,22 @@ class AndroidClientWriter extends ClientWriter
             $members = $this->buildJavaMembers($inspector->allAttributes());
             $relations = $this->buildJavaRelations($inspector->relations());
             $endpoints = $this->buildJavaRoutes($routes);
-        
 
             $java = view("android::master", compact('classPath', 'package', 'className', 'primaryKey', 'members', 'relations', 'endpoints'))->render();
             $this->client()->files->put($path . "/" . $className . ".java", $java);
         }
+        
+        //add gradle file
+        $gradleFile = $this->client()->files->get(dirname(__FILE__)."/gradle/build.gradle");
+        $this->client()->files->put($this->client()->baseBuildPath . '/android/build.gradle',$gradleFile);
+        
+        //add androidManifest.xml file
+        $manifestFile = $this->client()->files->get(dirname(__FILE__)."/gradle/src/main/AndroidManifest.xml");
+        $manifestFile = str_replace('{{PACKAGE}}', $package, $manifestFile);
+        $this->client()->files->put($this->client()->baseBuildPath . '/android/src/main/AndroidManifest.xml',$manifestFile);
+        
+        // deliver to the mobile developer 
+        $git->push();
     }
 
     private function buildJavaRoutes($routes)
@@ -261,10 +283,11 @@ class AndroidClientWriter extends ClientWriter
 
     private function buildJavaPackageFolder($package)
     {
-        $path = $this->client()->baseBuildPath . '/android/' . str_replace('.', '/', $package);
+        
+        $path = $this->client()->baseBuildPath . '/android/src/main/java/' . str_replace('.', '/', $package);
 
         $this->client()->initAndClearFolder($path);
-
+        
         return $path;
     }
 }
