@@ -5,8 +5,9 @@ namespace Square1\Laravel\Connect\App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
-use Psr\Http\Message\ServerRequestInterface;
+use Illuminate\Support\Facades\Auth;
 use Square1\Laravel\Connect\ConnectUtils;
+use Psr\Http\Message\ServerRequestInterface;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Square1\Laravel\Connect\App\Http\Controllers\ConnectBaseController;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -34,7 +35,7 @@ class AuthController extends ConnectBaseController
      */
     public function show(Request $request)
     {
-        $data = $this->currentAuthUser();
+        $data = Auth::user();
         return response()->connect($data);
     }
 
