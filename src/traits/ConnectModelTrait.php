@@ -40,7 +40,7 @@ trait ConnectModelTrait
             
             $with_array = array_map($callback, $with_array);
         }
-        
+      
         return $this::with($with_array);
     }
     

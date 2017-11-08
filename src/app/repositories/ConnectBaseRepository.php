@@ -40,7 +40,7 @@ class ConnectBaseRepository implements ConnectRepository
     {
         
         $filter =  FilterManager::buildFromArray($this->model, $filter);
-                
+          
         return $this->model->with($with)->filter($filter)
                 ->order($sort_by)
                 ->paginate(intval($perPage));
@@ -77,6 +77,7 @@ class ConnectBaseRepository implements ConnectRepository
     
     public function show($id, $with = [])
     {
+        
         return $this->model
                 ->with($with)
                 ->where('id', $id)

@@ -2,6 +2,7 @@
 
 namespace Square1\Laravel\Connect\Clients\Deploy;
 
+use Carbon\Carbon;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -36,7 +37,10 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
      {
 
          $this->runGitCommand("add --all ");
-         $this->runGitCommand("commit -m ' test commit' ");
+         
+         $message = Carbon::now()->toDateTimeString();
+         $this->runGitCommand("commit -m ' version created on $message' ");
+         
          $this->runGitCommand("push origin ". $this->branch ." -u --force ");
      }
 
