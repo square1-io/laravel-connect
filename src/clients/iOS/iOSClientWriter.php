@@ -8,6 +8,7 @@ use Square1\Laravel\Connect\Console\MakeClient;
 use Square1\Laravel\Connect\Clients\ClientWriter;
 use Square1\Laravel\Connect\Model\ModelAttribute;
 use Square1\Laravel\Connect\Model\ModelInspector;
+use Square1\Laravel\Connect\Clients\Deploy\GitDeploy;
 
 class iOSClientWriter extends ClientWriter
 {
@@ -21,6 +22,14 @@ class iOSClientWriter extends ClientWriter
         $this->info("------ RUNNING iOS CLIENT WRITER ------");
 
         $path = $this->buildSwiftFolder();
+        
+        //now that patsh are set prepare git for deploy
+        // pull previous version
+        $git = new GitDeploy(env('IOS_GIT_REPO'), 
+                $this->client()->baseBuildPath . '/iOS/' ,
+                env('IOS_GIT_BRANCH') );
+        
+        $git->init();
         
         $tableMap  = array_merge(array(), $this->client()->tableMap);
         
@@ -119,6 +128,9 @@ class iOSClientWriter extends ClientWriter
         $xmlModel->appendChild($xmlElements);
         $this->buildXCDatamodeld($xml);
         $this->client()->dumpObject('members_test', $members_test);
+        
+           // deliver to the mobile developer 
+        $git->push();
     }
 
     private function buildJavaRoutes($routes)
