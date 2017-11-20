@@ -20,4 +20,24 @@ trait ConnectApiRequestTrait
     {
         return false;
     }
+
+    /**
+     * return an array with the parameters for this request 
+     * @return array
+     */
+    public  function parameters()
+    {
+        $params = array();
+        $rules = $this->rules();
+
+        if(isset($this->params))
+        {
+           $params = array_merge($rules, $this->params); 
+        }
+        else 
+        {
+           $params = array_merge($rules, $params);  
+        }
+        return $params;
+    }
 }

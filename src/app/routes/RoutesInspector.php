@@ -142,7 +142,7 @@ class RoutesInspector
     
     public function requestParseParameters($request)
     {
-        $rules = $request->rules();
+        $rules = $request->parameters();
         if ($request->getIsPaginated()) {
             $this->addPaginatedParameters($rules);
         }
