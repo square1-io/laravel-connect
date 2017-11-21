@@ -28,6 +28,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
      {
          $this->runGitCommand("init ");
          $this->runGitCommand("remote add origin ".$this->repository);
+         $this->runCommand("ssh -T git@bitbucket.org");
          $this->runGitCommand("fetch --tags --progress");
          $this->switchToBranch($this->branch);
 
@@ -45,37 +46,37 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
      }
 
      private function runGitCommand($command)
+     { 
+        $this->runCommand("git ".$command);
+     }
+
+     private function runCommand($command)
      {
         
-        $git = new Process("git ".$command);
+        $process = new Process($command);
 
-        $git->setWorkingDirectory($this->sourcePath);
+        $process->setWorkingDirectory($this->sourcePath);
 
-        $git->run();
+        $process->run(function ($type, $buffer) {
+            if ( $type == \Symfony\Component\Process\Process::OUT ) {
+                fwrite(STDOUT, $buffer);
+            }
+            else {
+                fwrite(STDERR, $buffer);
+            }
+        });
 
-        if($git->isSuccessful()){
+        if($process->isSuccessful()){
            
         } else {
-            throw new ProcessFailedException($git);
+            throw new ProcessFailedException($process);
         }
          
      }
      
      private function switchToBranch($branch)
-     {
-        
-        $git = new Process("git checkout $branch --force 2>/dev/null || git checkout -b $branch --force");
-
-        $git->setWorkingDirectory($this->sourcePath);
-
-        $git->run();
-
-        if($git->isSuccessful()){
-           
-        } else {
-            throw new ProcessFailedException($git);
-        }
-         
+     { 
+        $this->runCommand("git checkout $branch --force 2>/dev/null || git checkout -b $branch --force");
      }
     
 }
