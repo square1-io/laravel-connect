@@ -32,6 +32,8 @@ class AndroidClientWriter extends ClientWriter
                 $this->client()->baseBuildPath . '/android/' ,
                 env('ANDROID_GIT_BRANCH') );
         
+        $git->setDisabled(env('ANDROID_GIT_DISABLED'));
+                
         $git->init();
         
         $tableMap  = array_merge(array(), $this->client()->tableMap);

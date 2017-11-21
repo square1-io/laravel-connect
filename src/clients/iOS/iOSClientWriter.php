@@ -29,6 +29,7 @@ class iOSClientWriter extends ClientWriter
                 $this->client()->baseBuildPath . '/iOS/' ,
                 env('IOS_GIT_BRANCH') );
         
+        $git->setDisabled(env('IOS_GIT_DISABLED'));        
         $git->init();
         
         $tableMap  = array_merge(array(), $this->client()->tableMap);

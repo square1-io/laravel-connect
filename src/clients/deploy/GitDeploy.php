@@ -15,13 +15,20 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
      private $branch;//default is master
     
      private $sourcePath;//folder containing the code to push
+
+     private $disabled;// set this instance to disabled
      
      public function __construct($repo, $source, $branch = 'master') {
          
          $this->repository = $repo;
          $this->branch = $branch;
          $this->sourcePath = $source;
+         $this->disabled = FALSE;
          
+     }
+
+     public function setDisabled($disabled){
+         $this->disabled = $disabled;
      }
 
      public function init()
@@ -53,6 +60,10 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
      private function runCommand($command)
      {
         
+        if($this->disabled == TRUE){
+            return;
+        }
+
         $process = new Process($command);
 
         $process->setWorkingDirectory($this->sourcePath);
