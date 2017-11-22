@@ -17,6 +17,12 @@ public class {{$className}}: NSManagedObject {
 
 extension {{$className}} {
 
+@each('ios::partials._property', $members, 'property') 
+
+@each('ios::partials._relation', $relations, 'relation') 
+
+@each('ios::partials._relation_setters', $relations, 'relation') 
+
     @nonobjc public class func fetchRequest() -> NSFetchRequest<{{$className}}> {
         return NSFetchRequest<{{$className}}>(entityName: "{{$className}}")
     }
