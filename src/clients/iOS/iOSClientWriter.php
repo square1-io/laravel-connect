@@ -123,7 +123,8 @@ class iOSClientWriter extends ClientWriter
             $endpoints = $this->buildJavaRoutes($routes);
             unset($tableMap[$inspector->tableName()]);
 
-            $swift = view("ios::master", compact('classPath', 'members', 'package', 'className', 'primaryKey', 'endpoints'))->render();
+            $relations = $this->buildCoreDataRelations($inspector->relations());
+            $swift = view("ios::master", compact('classPath','relations', 'members', 'package', 'className', 'primaryKey', 'endpoints'))->render();
             $this->client()->files->put($path . "/" . $className . "+CoreDataClass.swift", $swift);
         }
         $xmlModel->appendChild($xmlElements);
@@ -202,7 +203,7 @@ class iOSClientWriter extends ClientWriter
             $attribute = is_array($attribute) ? $attribute[0] : $attribute;
             $this->info("$attribute", 'vvv');
             //this save us from members that use language specific keywords as name
-            $varName = lcfirst($attribute->name);
+            $varName = 'con'.ucfirst($attribute->name);
             $name = Str::studly($attribute->name);
             $type = $this->resolveType($attribute);
             $xmlType = $this->resolveTypeForCoreDataXML($attribute);
@@ -360,11 +361,11 @@ class iOSClientWriter extends ClientWriter
         if ($type == 'timestamp' ||
                 $type == 'date' ||
                 $type == 'dateTime') {
-            return 'Date';
+            return 'NSDate';
         }
 
         if ($type == 'integer' || $type == 'int') {
-            return 'Integer';
+            return 'Int64';
         }
 
         if ($type == 'float') {
@@ -376,7 +377,7 @@ class iOSClientWriter extends ClientWriter
         }
 
         if ($type == 'boolean') {
-            return 'Boolean';
+            return 'Bool';
         }
 
         if ($type == 'image') {
@@ -384,6 +385,26 @@ class iOSClientWriter extends ClientWriter
         }
 
         return $type;
+    }
+
+    private function buildCoreDataRelations($relations)
+    {
+        $results = [];
+        
+        foreach ($relations as $relationName => $relation) {
+
+            $relatedClass = $this->client()->classMap[$relation['related']]['inspector']->classShortName();
+            $varName = 'con'.ucfirst($relationName);
+            $name = $relationName;
+            $type = $relation['many'] ? "NSSet" : $relatedClass;
+            $hasSetter = false;
+            //$type = $type."<$relatedClass>";
+            $many = $relation['many'];
+            $key = $relation['foreignKey'];
+            $results[$varName] = compact('hasSetter', 'varName', 'name', 'type', 'relatedClass', 'key', 'many');
+        }
+        
+        return $results;
     }
 
     private function buildSwiftFolder()
