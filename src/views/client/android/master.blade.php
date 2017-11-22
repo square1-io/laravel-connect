@@ -24,12 +24,12 @@ public class {{$className}} extends BaseModel {
     @each('android::partials._relation_getter', $relations, 'relation') 
     
    public static ModelList list(){
-        return BaseModel.index({{$className}}.class);
+        return ModelList.listForModel({{$className}}.class);
     }
 
     public static ApiRequest get(int id, LaravelConnectClient.Observer observer){
 
-        return BaseModel.show( {{$className}}.class, id, observer);
+        return BaseModel.get( {{$className}}.class, id, observer);
     }
     
     @foreach($endpoints as $endpoint)
