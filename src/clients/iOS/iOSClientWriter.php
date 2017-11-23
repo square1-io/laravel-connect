@@ -55,7 +55,7 @@ class iOSClientWriter extends ClientWriter
             $this->info($className);
             
             //loop over the tables and match members and types
-            $members = $this->buildJavaMembers(array_merge($inspector->getDynamicAttributes(), $tableMap[$inspector->tableName()]['attributes']));
+            $members = $this->buildSwiftMembers(array_merge($inspector->getDynamicAttributes(), $tableMap[$inspector->tableName()]['attributes']));
             $members_test[$className] = $members;
             //create xml for coredata schema
             $coredata_entity = $xml->createElement("entity");
@@ -120,7 +120,7 @@ class iOSClientWriter extends ClientWriter
             $xmlElements->appendChild($element);
             
             
-            $endpoints = $this->buildJavaRoutes($routes);
+            $endpoints = $this->buildSwiftRoutes($routes);
             unset($tableMap[$inspector->tableName()]);
 
             $relations = $this->buildCoreDataRelations($inspector->relations());
@@ -135,14 +135,14 @@ class iOSClientWriter extends ClientWriter
         $git->push();
     }
 
-    private function buildJavaRoutes($routes)
+    private function buildSwiftRoutes($routes)
     {
         $requests = [];
 
         foreach ($routes as $route) {
             $allowedMethods = array_diff($route['methods'], ['HEAD']);
             foreach ($allowedMethods as $method) {
-                $request = $this->buildJavaRoute($method, $route);
+                $request = $this->buildSwiftRoute($method, $route);
                 if (count($allowedMethods) > 1) {
                     $request['requestName'] = $request['requestName'] . "_$method";
                 }
@@ -153,7 +153,7 @@ class iOSClientWriter extends ClientWriter
         return $requests;
     }
 
-    private function buildJavaRoute($method, $route)
+    private function buildSwiftRoute($method, $route)
     {
         $requestParams = null;
         $requestParamsMap = null;
@@ -161,11 +161,11 @@ class iOSClientWriter extends ClientWriter
         foreach ($route['params'] as $paramName => $param) {
             $type = null;
             if (isset($param['table'])) {
-                $type = $this->resolveTableNameToJavaType($param['table']);
+                $type = $this->resolveTableNameToSwiftType($param['table']);
             }
             //if no table type we use the route type
             if (!isset($type)) {
-                $type = $this->resolveToJavaType($param['type']);
+                $type = $this->resolveToSwiftType($param['type']);
             }
 
             if (isset($param['array']) && $param['array'] == true) {
@@ -195,7 +195,7 @@ class iOSClientWriter extends ClientWriter
         return $request;
     }
 
-    private function buildJavaMembers($attributes)
+    private function buildSwiftMembers($attributes)
     {
         $members = array();
 
@@ -226,16 +226,16 @@ class iOSClientWriter extends ClientWriter
             return [];
         }
 
-        $javaRoutes = [];
+        $swiftRoutes = [];
         foreach ($routes as $route) {
         }
 
-        return $javaRoutes;
+        return $swiftRoutes;
     }
 
     public function buildRoute($route)
     {
-        $javaRoute = [];
+        $swiftRoute = [];
 
         $params = [];
 
@@ -243,9 +243,9 @@ class iOSClientWriter extends ClientWriter
             $current = [];
             $current['name'] = $paramName;
             $current['type'] = isset($param["table"]) ?
-                    $this->resolveTableNameToJavaType($param["table"]) : null;
+                    $this->resolveTableNameToSwiftType($param["table"]) : null;
             if (is_null($current['type'])) {
-                $current['type'] = $this->resolveToJavaType($param["type"]);
+                $current['type'] = $this->resolveToSwiftType($param["type"]);
             }
 
             $current['array'] = isset($param["array"]);
@@ -255,7 +255,7 @@ class iOSClientWriter extends ClientWriter
 
 
 
-        return $javaRoute;
+        return $swiftRoute;
     }
 
     /**
@@ -282,10 +282,10 @@ class iOSClientWriter extends ClientWriter
             $attribute = $attribute->type;
         }
 
-        return $this->resolveToJavaType($attribute);
+        return $this->resolveToSwiftType($attribute);
     }
 
-    public function resolveTableNameToJavaType($table)
+    public function resolveTableNameToSwiftType($table)
     {
         $modelInspector = $this->client()->tableInspectorMap[$table];
         if (!empty($modelInspector)) {
@@ -349,7 +349,7 @@ class iOSClientWriter extends ClientWriter
         return $type;
     }
 
-    public function resolveToJavaType($type)
+    public function resolveToSwiftType($type)
     {
         if ($type == 'text' ||
                 $type == 'char' ||
@@ -394,7 +394,7 @@ class iOSClientWriter extends ClientWriter
         foreach ($relations as $relationName => $relation) {
 
             $relatedClass = $this->client()->classMap[$relation['related']]['inspector']->classShortName();
-            $varName = 'con'.ucfirst($relationName);
+            $varName = $relationName;
             $name = $relationName;
             $type = $relation['many'] ? "NSSet" : $relatedClass;
             $hasSetter = false;
