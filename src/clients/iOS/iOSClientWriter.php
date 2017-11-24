@@ -29,7 +29,7 @@ class iOSClientWriter extends ClientWriter
                 $this->client()->baseBuildPath . '/iOS/' ,
                 env('IOS_GIT_BRANCH') );
         
-        $git->setDisabled(env('IOS_GIT_DISABLED'));        
+        $git->setDisabled(env('IOS_GIT_DISABLED', false));        
         $git->init();
         
         $tableMap  = array_merge(array(), $this->client()->tableMap);
@@ -198,12 +198,12 @@ class iOSClientWriter extends ClientWriter
     private function buildSwiftMembers($attributes)
     {
         $members = array();
-
+        $prefix = config("connect.clients.ios.prefix");
         foreach ($attributes as $attribute) {
             $attribute = is_array($attribute) ? $attribute[0] : $attribute;
             $this->info("$attribute", 'vvv');
             //this save us from members that use language specific keywords as name
-            $varName = 'con'.ucfirst($attribute->name);
+            $varName = prefix.Str::studly($attribute->name);
             $name = Str::studly($attribute->name);
             $type = $this->resolveType($attribute);
             $xmlType = $this->resolveTypeForCoreDataXML($attribute);

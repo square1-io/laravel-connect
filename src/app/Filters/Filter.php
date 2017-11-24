@@ -1,15 +1,16 @@
 <?php
+/**
+ *  Filter
+ *
+ * @author roberto
+ */
 
 namespace Square1\Laravel\Connect\App\Filters; 
 
 use Illuminate\Contracts\Support\Arrayable;
 use Square1\Laravel\Connect\App\Filters\Criteria;
 use Illuminate\Database\Eloquent\Relations\Relation;
-/**
- *  Filter
- *
- * @author roberto
- */
+
 class Filter implements Arrayable {
    
     private $criteria;

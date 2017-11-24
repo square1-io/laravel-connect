@@ -1,13 +1,14 @@
 <?php
-
-namespace Square1\Laravel\Connect\App\Filters;
-
-use Illuminate\Support\Str;
 /**
  *  Criteria
  *
  * @author roberto
  */
+
+namespace Square1\Laravel\Connect\App\Filters;
+
+use Illuminate\Support\Str;
+
 class Criteria {
    
     const CONTAINS = "contains";

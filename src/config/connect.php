@@ -13,7 +13,7 @@ return [
     'clients' => [
         'build_path' => base_path().'/build/square1/connect',
         'android' => [ 'package' => 'com.connect.client' ],
-        'ios' => [ 'data_model_name' => 'laravel_connect' ],//laravel_connect.xcdatamodeld
+        'ios' => [ 'prefix' => 'cnt' , 'data_model_name' => 'laravel_connect' ],//laravel_connect.xcdatamodeld
     ],
 
 ];
