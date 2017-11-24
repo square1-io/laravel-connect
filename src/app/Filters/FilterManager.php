@@ -1,5 +1,11 @@
 <?php
 
+/**
+ *  FilterManager
+ *
+ * @author roberto
+ */
+
 namespace Square1\Laravel\Connect\App\Filters; 
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -7,12 +13,6 @@ use Square1\Laravel\Connect\App\Filters\Filter;
 use Square1\Laravel\Connect\App\Filters\Criteria;
 
 
-
-/**
- *  FilterManager
- *
- * @author roberto
- */
 class FilterManager implements Arrayable{
     
     private $filters;

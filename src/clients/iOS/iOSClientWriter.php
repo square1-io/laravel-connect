@@ -43,10 +43,9 @@ class iOSClientWriter extends ClientWriter
         $xmlModel = $xml->getElementsByTagName("model")->item(0);
         $xmlElements = $xml->createElement("elements");
         
-        //    <elements>
-        //<element name="Event" positionX="261" positionY="189" width="128" height="60"/>
-   
+        
         foreach ($this->client()->classMap as $classMap) {
+
             $routes = isset($classMap["routes"]) ? $classMap["routes"] : [];
             $inspector = $classMap['inspector'];
             $className = $inspector->classShortName();
@@ -55,8 +54,11 @@ class iOSClientWriter extends ClientWriter
             $this->info($className);
             
             //loop over the tables and match members and types
-            $members = $this->buildSwiftMembers(array_merge($inspector->getDynamicAttributes(), $tableMap[$inspector->tableName()]['attributes']));
+            $members = $this->buildSwiftMembers(array_merge($inspector->getDynamicAttributes(),
+                 $tableMap[$inspector->tableName()]['attributes']));
+
             $members_test[$className] = $members;
+
             //create xml for coredata schema
             $coredata_entity = $xml->createElement("entity");
             $coredata_entity->setAttribute("name", $className);
@@ -68,6 +70,7 @@ class iOSClientWriter extends ClientWriter
             //setting attributes to the entity "
             // <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
             foreach ($members as $member) {
+                
                 $newElement = null;
                 
                 if ($member['primaryKey']) {
