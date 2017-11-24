@@ -56,7 +56,7 @@ class iOSClientWriter extends ClientWriter
             //loop over the tables and match members and types
             $members = $this->buildSwiftMembers(array_merge($inspector->getDynamicAttributes(),
                  $tableMap[$inspector->tableName()]['attributes']));
-
+  
             $members_test[$className] = $members;
 
             //create xml for coredata schema
@@ -67,47 +67,49 @@ class iOSClientWriter extends ClientWriter
             $coredata_entity->setAttribute("representedClassName", $className);
             $coredata_entity->setAttribute("syncable", "YES");
             
-            //setting attributes to the entity "
+            //setting attributes to the entity
             // <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
             foreach ($members as $member) {
                 
-                $newElement = null;
-                
+                $newElement = $xml->createElement("attribute");
+
                 if ($member['primaryKey']) {
-                    // ="0" ="YES" syncable="YES"/>
-                    $newElement = $xml->createElement("attribute");
+                        // ="0" ="YES" syncable="YES"/>
                     $userInfo =  $xml->createElement("userInfo");
                     $newElement->appendChild($userInfo);
-                    $newElement->setAttribute("name", "identifier");
-                    $newElement->setAttribute("attributeType", "Integer 64");
-                    $newElement->setAttribute("defaultValueString", "0");
-                    $newElement->setAttribute("usesScalarValueType", "YES");
-                } elseif (!empty($member['references']) || $member['collection']) {
-                    // <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="messages" inverseEntity="Conversation" syncable="YES"/>
-                    $newElement = $xml->createElement("relationship");
-                    $newElement->setAttribute("name", $member['varName']);
-                    $newElement->setAttribute("destinationEntity", $member['type']);
-                    $newElement->setAttribute("deletionRule", "Nullify");
-                    
-                    if ($member['collection']) {
-                        $newElement->setAttribute("toMany", "YES");
-                        //toMany="YES"
-                    } else {
-                        $newElement->setAttribute("maxCount", "1");
-                    }
-                } else {
-                    $newElement = $xml->createElement("attribute");
-                    $newElement->setAttribute("attributeType", $member['xmlType']);
-                    $newElement->setAttribute("name", $member['varName']);
                 }
-                
-                
+
+                $newElement->setAttribute("attributeType", $member['xmlType']);
+                $newElement->setAttribute("name", $member['varName']);
+
                 if (isset($newElement)) {
                     $newElement->setAttribute("optional", "YES");
                     $coredata_entity->appendChild($newElement);
                 }
             }
             
+            //seeting relationships to the entity
+            $relations = $this->buildCoreDataRelations($inspector->relations());   
+
+            foreach($relations as $relation){
+
+                $newElement = $xml->createElement("relationship");
+                $newElement->setAttribute("name", $relation['varName']);
+                $newElement->setAttribute("destinationEntity", $relation['relatedClass']);
+                $newElement->setAttribute("deletionRule", "Nullify");
+
+                if ($relation['many']) {
+                    $newElement->setAttribute("toMany", "YES");
+                 
+                } else {
+                    $newElement->setAttribute("maxCount", "1");
+                }
+
+                if (isset($newElement)) {
+                    $coredata_entity->appendChild($newElement);
+                }
+            }
+
             $xmlModel->appendChild($coredata_entity);
             
             //this is just for the visual editor
@@ -126,7 +128,7 @@ class iOSClientWriter extends ClientWriter
             $endpoints = $this->buildSwiftRoutes($routes);
             unset($tableMap[$inspector->tableName()]);
 
-            $relations = $this->buildCoreDataRelations($inspector->relations());
+            
             $swift = view("ios::master", compact('classPath','relations', 'members', 'package', 'className', 'primaryKey', 'endpoints'))->render();
             $this->client()->files->put($path . "/" . $className . "+CoreDataClass.swift", $swift);
         }
@@ -201,12 +203,12 @@ class iOSClientWriter extends ClientWriter
     private function buildSwiftMembers($attributes)
     {
         $members = array();
-        $prefix = config("connect.clients.ios.prefix");
+        $prefix = config("connect.clients.ios.prefix","cn");
         foreach ($attributes as $attribute) {
             $attribute = is_array($attribute) ? $attribute[0] : $attribute;
             $this->info("$attribute", 'vvv');
             //this save us from members that use language specific keywords as name
-            $varName = prefix.Str::studly($attribute->name);
+            $varName = $prefix.Str::studly($attribute->name);
             $name = Str::studly($attribute->name);
             $type = $this->resolveType($attribute);
             $xmlType = $this->resolveTypeForCoreDataXML($attribute);
