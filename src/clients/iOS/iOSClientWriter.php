@@ -200,6 +200,30 @@ class iOSClientWriter extends ClientWriter
         return $request;
     }
 
+    public function getSwiftVariableName($attributeName){
+       
+        $prefix = config("connect.clients.ios.prefix");
+        if(empty($prefix)){
+
+            if("description" === $attributeName){
+                $attributeName = "desc";
+            }
+            else if("default" === $attributeName){
+                $attributeName = "_default";
+            }
+            else if("id" === $attributeName){
+                $attributeName = "_id";
+            }
+            else if("class" === $attributeName){
+                $attributeName = "_class";
+            }
+
+            return lcfirst($attributeName);
+        }
+
+        return $prefix.Str::studly($attribute->name);
+    }
+        
     private function buildSwiftMembers($attributes)
     {
         $members = array();
@@ -208,9 +232,10 @@ class iOSClientWriter extends ClientWriter
             $attribute = is_array($attribute) ? $attribute[0] : $attribute;
             $this->info("$attribute", 'vvv');
             //this save us from members that use language specific keywords as name
-            $varName = $prefix.Str::studly($attribute->name);
+            $varName = $this->getSwiftVariableName($attribute->name);
             $name = Str::studly($attribute->name);
             $type = $this->resolveType($attribute);
+            $json_key = $attribute->name;
             $xmlType = $this->resolveTypeForCoreDataXML($attribute);
             $collection = $attribute->collection;
             $dynamic = $attribute->dynamic; //those have no setter! are from the append of the model array
@@ -218,7 +243,7 @@ class iOSClientWriter extends ClientWriter
 
             $references = isset($attribute->foreignKey) ? $attribute->foreignKey : null;
             if (!empty($type)) {
-                $members[] = compact('dynamic', 'xmlType', 'collection', 'varName', 'name', 'type', 'primaryKey', 'references');
+                $members[] = compact('json_key','dynamic', 'xmlType', 'collection', 'varName', 'name', 'type', 'primaryKey', 'references');
             }
         }
 
