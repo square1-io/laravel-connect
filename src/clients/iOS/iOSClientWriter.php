@@ -55,7 +55,7 @@ class iOSClientWriter extends ClientWriter
             
             //loop over the tables and match members and types
             $members = $this->buildSwiftMembers(array_merge($inspector->getDynamicAttributes(),
-                 $tableMap[$inspector->tableName()]['attributes']));
+                 $tableMap[$inspector->tableName()]['attributes']) , $className);
   
             $members_test[$className] = $members;
 
@@ -72,13 +72,23 @@ class iOSClientWriter extends ClientWriter
             foreach ($members as $member) {
                 
                 $newElement = $xml->createElement("attribute");
-
+                $userInfo =  $xml->createElement("userInfo");
+              
                 if ($member['primaryKey']) {
                         // ="0" ="YES" syncable="YES"/>
-                    $userInfo =  $xml->createElement("userInfo");
-                    $newElement->appendChild($userInfo);
+                    $el = $xml->createElement("entry");
+                    $el->setAttribute("key", "laravel.model.primaryKey");
+                    $el->setAttribute("value",  "YES");
+                    $userInfo->appendChild($el);  
                 }
 
+                    $el = $xml->createElement("entry");
+                    $el->setAttribute("key","laravel.json.key" );
+                    $el->setAttribute("value", $member['json_key'] );
+                    $userInfo->appendChild($el);
+
+                $newElement->appendChild($userInfo);
+                
                 $newElement->setAttribute("attributeType", $member['xmlType']);
                 $newElement->setAttribute("name", $member['varName']);
 
@@ -98,16 +108,27 @@ class iOSClientWriter extends ClientWriter
                 $newElement->setAttribute("destinationEntity", $relation['relatedClass']);
                 $newElement->setAttribute("deletionRule", "Nullify");
 
+                $userInfo =  $xml->createElement("userInfo");
+                $newElement->appendChild($userInfo);
+
                 if ($relation['many']) {
                     $newElement->setAttribute("toMany", "YES");
                  
                 } else {
                     $newElement->setAttribute("maxCount", "1");
+                    $el = $xml->createElement("entry");
+                    $el->setAttribute("key","laravel.model.foreignKey" );
+                    $el->setAttribute("value", $relation['key'] );
+                    $userInfo->appendChild($el);
                 }
 
-                if (isset($newElement)) {
-                    $coredata_entity->appendChild($newElement);
-                }
+                $el = $xml->createElement("entry");
+                $el->setAttribute("key","laravel.json.key" );
+                $el->setAttribute("value", $relation['name'] );
+                $userInfo->appendChild($el);
+
+                $coredata_entity->appendChild($newElement);
+                
             }
 
             $xmlModel->appendChild($coredata_entity);
@@ -200,31 +221,25 @@ class iOSClientWriter extends ClientWriter
         return $request;
     }
 
-    public function getSwiftVariableName($attributeName){
+    //@[@"type", @"description", @"signed"];
+    public function getSwiftVariableName($attributeName, $className){
        
         $prefix = config("connect.clients.ios.prefix");
         if(empty($prefix)){
 
-            if("description" === $attributeName){
-                $attributeName = "desc";
-            }
-            else if("default" === $attributeName){
-                $attributeName = "_default";
-            }
-            else if("id" === $attributeName){
-                $attributeName = "_id";
-            }
-            else if("class" === $attributeName){
-                $attributeName = "_class";
+            if("description" === $attributeName || 
+            "type" === $attributeName  || 
+            "signed" === $attributeName ){
+                $attributeName = $className."_".$attributeName;
             }
 
-            return lcfirst($attributeName);
+            return lcfirst(Str::studly($attributeName));
         }
 
         return $prefix.Str::studly($attribute->name);
     }
         
-    private function buildSwiftMembers($attributes)
+    private function buildSwiftMembers($attributes, $className)
     {
         $members = array();
         $prefix = config("connect.clients.ios.prefix","cn");
@@ -232,7 +247,7 @@ class iOSClientWriter extends ClientWriter
             $attribute = is_array($attribute) ? $attribute[0] : $attribute;
             $this->info("$attribute", 'vvv');
             //this save us from members that use language specific keywords as name
-            $varName = $this->getSwiftVariableName($attribute->name);
+            $varName = $this->getSwiftVariableName($attribute->name, $className);
             $name = Str::studly($attribute->name);
             $type = $this->resolveType($attribute);
             $json_key = $attribute->name;

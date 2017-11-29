@@ -1,1 +1,1 @@
-    {{$property['varName']}} = "{{$property['json_key']}}"
+   case {{$property['varName']}} = "{{$property['json_key']}}"

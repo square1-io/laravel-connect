@@ -27,13 +27,12 @@ public class {{$className}}: NSManagedObject, Decodable {
         self.init(entity: entity, insertInto: nil)
         
         // Decode
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        @each('ios::partials._decoding', $members, 'property')
+        {{--  //let values = try decoder.container(keyedBy: CodingKeys.self)  --}}
+        {{--  @each('ios::partials._decoding', $members, 'property')  --}}
     }
 
 }
 
-}
 
 extension {{$className}} {
 
