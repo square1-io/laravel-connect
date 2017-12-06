@@ -108,7 +108,7 @@ class MakeClient extends Command
         $this->baseBuildPath = config('connect.clients.build_path');
         $this->baseRepositoriesPath = app_path()."/repositories/connect";
         
-        $this->migrationsHandler = new MigrationsHandler($this->files, $this);
+        //$this->migrationsHandler = new MigrationsHandler($this->files, $this);
        
         
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
@@ -135,7 +135,8 @@ class MakeClient extends Command
         $this->prepareStorage();
 
         //loop over the migrations to see what parameters to add to each model opbject
-         $this->tableMap = $this->migrationsHandler->process();
+        $this->migrationsHandler = new MigrationsHandler($this->files, $this);
+        $this->tableMap = $this->migrationsHandler->process();
         
         //dd($this->tableMap);
         //list of classes extending Model
