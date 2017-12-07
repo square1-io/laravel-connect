@@ -58,7 +58,7 @@ class ConnectServiceProvider extends ServiceProvider
     {
         app('router')->aliasMiddleware('connect', AfterConnectMiddleware::class);
         
-        $this->loadRoutesFrom(__DIR__ . '/app/routes/routes_connect.php');
+        $this->loadRoutesFrom(__DIR__ . '/App/Routes/routes_connect.php');
     }
     
     /**
