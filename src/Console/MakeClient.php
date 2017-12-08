@@ -106,7 +106,7 @@ class MakeClient extends Command
         
         $this->baseTmpPath = base_path('tmp');
         $this->baseBuildPath = config('connect.clients.build_path');
-        $this->baseRepositoriesPath = app_path()."/repositories/connect";
+        $this->baseRepositoriesPath = app_path()."/Repositories/Connect";
         
         //$this->migrationsHandler = new MigrationsHandler($this->files, $this);
        
