@@ -70,7 +70,7 @@ class ConnectServiceProvider extends ServiceProvider
     protected function loadRoutesFrom($path)
     {
         Route::group([
-            'middleware' => ['api','connect'],
+            'middleware' => ['connect'],
             'namespace' => 'Square1\Laravel\Connect\App\Http\Controllers',
             'prefix' => config('connect.api.prefix'),
              'as' => 'connect.'
