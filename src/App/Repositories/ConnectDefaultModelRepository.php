@@ -2,12 +2,10 @@
 
 namespace Square1\Laravel\Connect\App\Repositories;
 
-  
-
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 use Square1\Laravel\Connect\ConnectUtils;
-use Square1\Laravel\Connect\App\Filters\FilterManager; 
+use Square1\Laravel\Connect\App\Filters\FilterManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -21,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
-class ConnectBaseRepository implements ConnectRepository
+class ConnectDefaultModelRepository implements ConnectRepository
 {
     protected $model;
 
@@ -30,15 +28,17 @@ class ConnectBaseRepository implements ConnectRepository
         $this->model = new $model;
     }
     /**
-     * Get all the models.
+     * Get a paginated list of all the instances of the current model.
      *
      * @param array $with Eager load models
+     * @param int $perPage set the number of elemets per page
+     * @param array $filter the array representation of a FilterManager object
+     * @param array $sort_by a list of sorting preferences
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
     public function index($with, $perPage, $filter, $sort_by)
     {
-        
         $filter =  FilterManager::buildFromArray($this->model, $filter);
           
         return $this->model->with($with)->filter($filter)
@@ -47,9 +47,15 @@ class ConnectBaseRepository implements ConnectRepository
     }
     
     /**
-     * Get all the models.
+     *  Get a paginated list of all the instances of the current related model(s).
+     *  This treats in the same toMany and toOne relations, a collection will be returned in all cases.
      *
+     * @param int $parentId the id of the parent model
+     * @param String $relationName the name of the relationship to fetch
      * @param array $with Eager load models
+     * @param int $perPage set the number of elemets per page
+     * @param array $filter the array representation of a FilterManager object
+     * @param array $sort_by a list of sorting preferences
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
@@ -59,8 +65,7 @@ class ConnectBaseRepository implements ConnectRepository
         $relation = $model->$relationName();
         
         //prevent calling other methods on the model
-        if($relation instanceof Relation){
-     
+        if ($relation instanceof Relation) {
             $model = $model::find($parentId);
    
             $relation = $model->$relationName();
@@ -77,7 +82,6 @@ class ConnectBaseRepository implements ConnectRepository
     
     public function show($id, $with = [])
     {
-        
         return $this->model
                 ->with($with)
                 ->where('id', $id)
@@ -107,17 +111,15 @@ class ConnectBaseRepository implements ConnectRepository
     {
         $this->checkCanCreate($params);
         
-        foreach ($params as $param => $value)
-        {
-            if($value instanceof UploadedFile)
-            {
+        foreach ($params as $param => $value) {
+            if ($value instanceof UploadedFile) {
                 $params[$param] = $this->storeUploadedFile($value);
             }
         }
         
         $model = $this->model->create($params);
 
-        return $model; 
+        return $model;
     }
 
     /**
@@ -132,10 +134,8 @@ class ConnectBaseRepository implements ConnectRepository
     {
         $model = $this->model->where('id', $id)->get()->first();
         
-        foreach ($params as $param => $value)
-        {
-            if($value instanceof UploadedFile)
-            {
+        foreach ($params as $param => $value) {
+            if ($value instanceof UploadedFile) {
                 $params[$param] = $this->storeUploadedFile($value);
             }
         }
@@ -154,20 +154,15 @@ class ConnectBaseRepository implements ConnectRepository
         $related = 0;
        
         
-        if(is_array($relationData))
-        {
-            //need to create a new instance of the related  
+        if (is_array($relationData)) {
+            //need to create a new instance of the related
             $repository = ConnectUtils::repositoryInstanceForModelPath($relatedModel->endpointReference());
             
             $related = $repository->create($relationData);
-        }
-        else if($relationData instanceof Model)
-        {
+        } elseif ($relationData instanceof Model) {
             $related = $relationData;
-        }
-        else
-        {
-           $related = $relatedModel::find($relationData);
+        } else {
+            $related = $relatedModel::find($relationData);
         }
   
         if ($relation instanceof HasOne) {
@@ -210,8 +205,7 @@ class ConnectBaseRepository implements ConnectRepository
         } elseif ($relation instanceof HasMany) {
             $relationModel = $relation->findOrNew($relId);
             $relationModel = $relationModel::find($relId);
-            //dd($relationModel);
-            //dd($relation->getForeignKeyName());
+   
             //cant remove this only assign to another one if strict relations
             $relationModel->setAttribute($relation->getForeignKeyName(), 0);
             $relationModel->save();
@@ -405,14 +399,17 @@ class ConnectBaseRepository implements ConnectRepository
         return true;
     }
 
-    /*
-     *  process uploaded files and based on the Model
-     *  returs an appropriate form of the file
+    /**
+     *  Store uploaded files in the defined storage.
+     *  Place then in a subfolder named as the endpoint reference for the model
+     *
+     *  @param UploadedFile $file, the uploaded file
+     *
+     *  @return String an appropriate representation of the location where the file was stored
+     *
      */
      public function storeUploadedFile($file)
-    {
-        
-        return Storage::putFile($this->model->endpointReference(), $file);
-
-    }
+     {
+         return Storage::putFile($this->model->endpointReference(), $file);
+     }
 }

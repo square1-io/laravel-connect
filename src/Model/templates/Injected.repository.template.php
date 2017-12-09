@@ -3,9 +3,9 @@
 
 namespace _INJECTED_APP_NAMESPACE_Repositories\Connect;
 
-use Square1\Laravel\Connect\App\Repositories\ConnectBaseRepository;
+use Square1\Laravel\Connect\App\Repositories\ConnectDefaultModelRepository;
 
-class _INJECTED_CLASS_NAME_TemplateConnectRepository extends ConnectBaseRepository
+class _INJECTED_CLASS_NAME_TemplateConnectRepository extends ConnectDefaultModelRepository
 {
     public function __construct()
     {
