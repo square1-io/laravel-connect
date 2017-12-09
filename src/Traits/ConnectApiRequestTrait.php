@@ -13,6 +13,7 @@ trait ConnectApiRequestTrait
     
     /**
      * returning this to true automaticall adds   the following parameters to the request  'page' => 'integer','per_page' => 'integer',
+     *
      * @return boolean
      */
   
@@ -23,6 +24,7 @@ trait ConnectApiRequestTrait
 
     /**
      * return an array with the parameters for this request 
+     *
      * @return array
      */
     public  function parameters()
@@ -30,13 +32,12 @@ trait ConnectApiRequestTrait
         $params = array();
         $rules = $this->rules();
 
-        if(isset($this->params))
-        {
-           $params = array_merge($rules, $this->params); 
+        if(isset($this->params)) {
+            $params = array_merge($rules, $this->params); 
         }
         else 
         {
-           $params = array_merge($rules, $params);  
+            $params = array_merge($rules, $params);  
         }
         return $params;
     }

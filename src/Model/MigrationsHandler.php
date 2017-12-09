@@ -12,8 +12,8 @@ class MigrationsHandler
    
     
     /**
-     *
      * Map Database table list of parameters to the table name
+     *
      * @var type array
      */
     private $tableMap;
@@ -41,7 +41,7 @@ class MigrationsHandler
     /**
      * Get the name of the migration.
      *
-     * @param  string  $path
+     * @param  string $path
      * @return string
      */
     public function getMigrationName($path)
@@ -65,8 +65,9 @@ class MigrationsHandler
         foreach ($classes as $class) {
           
             //discard framework classes
-            if (is_subclass_of($class, 'Illuminate\Database\Migrations\Migration') &&
-                    strpos((string)$class, 'Illuminate') === false) {
+            if (is_subclass_of($class, 'Illuminate\Database\Migrations\Migration') 
+                && strpos((string)$class, 'Illuminate') === false
+            ) {
                 $inspector = new MigrationInspector($class, $this->files, $this->client);
                 $inspector->inspect();
                 $this->aggregateTableDetails($inspector);
@@ -122,17 +123,23 @@ class MigrationsHandler
     /**
      * Get all of the migration files in a given path.
      *
-     * @param  string|array  $paths
+     * @param  string|array $paths
      * @return array
      */
     public function getMigrationFiles($paths)
     {
-        return Collection::make($paths)->flatMap(function ($path) {
-            return $this->files->glob($path.'/*_*.php');
-        })->filter()->sortBy(function ($file) {
-            return $this->getMigrationName($file);
-        })->values()->keyBy(function ($file) {
-            return $this->getMigrationName($file);
-        })->all();
+        return Collection::make($paths)->flatMap(
+            function ($path) {
+                return $this->files->glob($path.'/*_*.php');
+            }
+        )->filter()->sortBy(
+            function ($file) {
+                    return $this->getMigrationName($file);
+            }
+        )->values()->keyBy(
+            function ($file) {
+                    return $this->getMigrationName($file);
+            }
+        )->all();
     }
 }

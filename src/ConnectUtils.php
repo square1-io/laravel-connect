@@ -4,7 +4,8 @@ namespace Square1\Laravel\Connect;
 
 use Laravel\Passport\TokenRepository;
 
-class ConnectUtils {
+class ConnectUtils
+{
     
     static public function repositoryInstanceForModelPath($modelReference)
     {
@@ -29,8 +30,8 @@ class ConnectUtils {
             $eloquentToken = $tokenRepo->find($tokenId);
             
             if (isset($eloquentToken)) {
-             //resolve the user now
-            $authClass = config('connect.api.auth.model');
+                //resolve the user now
+                $authClass = config('connect.api.auth.model');
                 $authModel = new $authClass;
                 $repository = static::repositoryInstanceForModelPath($authModel->endpointReference());
                 $user = $repository->show($eloquentToken->user_id);
@@ -42,20 +43,19 @@ class ConnectUtils {
     }
     
         /**
-     * Parse token from the authorization header.
-     *
-     * @param string $header
-     * @param string $method
-     *
-     * @return false|string
-     */
+         * Parse token from the authorization header.
+         *
+         * @param string $header
+         * @param string $method
+         *
+         * @return false|string
+         */
     private static function parseAuthHeader($request, $header = 'authorization', $method = 'bearer')
     {
         $header = $request->headers->all();
         $header = $header['authorization'];
         
-        if(is_array($header))
-        {
+        if(is_array($header)) {
             $header = $header[0];
         }
         

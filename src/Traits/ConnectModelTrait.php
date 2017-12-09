@@ -55,15 +55,14 @@ trait ConnectModelTrait
     
     
      /**
-     * Scope a query to filter based on the filter array received.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeFilter($query, $filter = NULL)
+      * Scope a query to filter based on the filter array received.
+      *
+      * @param  \Illuminate\Database\Eloquent\Builder $query
+      * @return \Illuminate\Database\Eloquent\Builder
+      */
+    public function scopeFilter($query, $filter = null)
     {
-        if(isset($filter))
-        {
+        if(isset($filter)) {
             return $filter->apply($query, $this);
 
         }

@@ -27,10 +27,10 @@ interface ConnectRepository
       * returns the model instance give the id
 
       */
-     public function show($id, $with);
+    public function show($id, $with);
 
      
-     public function showRelation($parentId, $relationName, $relId, $with);
+    public function showRelation($parentId, $relationName, $relId, $with);
      
     /**
      * Creates a model.

@@ -15,14 +15,14 @@ class ApiClientBlueprint extends Blueprint
     /**
      * Create a new schema blueprint.
      *
-     * @param  string  $table
-     * @param  \Closure|null  $callback
+     * @param  string        $table
+     * @param  \Closure|null $callback
      * @return void
      */
     public function __construct(MigrationInspector $inspector,
-            $table,
-            Closure $callback = null)
-    {
+        $table,
+        Closure $callback = null
+    ) {
         parent::__construct($table, $callback);
         $this->inspector = $inspector;
     }

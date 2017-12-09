@@ -46,10 +46,10 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     }
 
       /**
-     * Get the default foreign key name for the model. but purge the Injected prefix
-     *
-     * @return string
-     */
+       * Get the default foreign key name for the model. but purge the Injected prefix
+       *
+       * @return string
+       */
     public function getForeignKey()
     {
         return $this->model->getForeignKey();
@@ -64,13 +64,13 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     
     
         /**
-     * Get a relationship value from a method.
-     *
-     * @param  string  $method
-     * @return mixed
-     *
-     * @throws \LogicException
-     */
+         * Get a relationship value from a method.
+         *
+         * @param  string $method
+         * @return mixed
+         *
+         * @throws \LogicException
+         */
     protected function getRelationshipFromMethod($method)
     {
         return  $this->$method();
@@ -86,13 +86,13 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     //
     //
       /**
-     * Define a one-to-one relationship.
-     *
-     * @param  string  $related
-     * @param  string  $foreignKey
-     * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
+       * Define a one-to-one relationship.
+       *
+       * @param  string $related
+       * @param  string $foreignKey
+       * @param  string $localKey
+       * @return \Illuminate\Database\Eloquent\Relations\HasOne
+       */
     public function hasOne($related, $foreignKey = null, $localKey = null)
     {
         $relationName = $this->guessRelationName();
@@ -109,11 +109,11 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a polymorphic one-to-one relationship.
      *
-     * @param  string  $related
-     * @param  string  $name
-     * @param  string  $type
-     * @param  string  $id
-     * @param  string  $localKey
+     * @param  string $related
+     * @param  string $name
+     * @param  string $type
+     * @param  string $id
+     * @param  string $localKey
      * @return \Illuminate\Database\Eloquent\Relations\MorphOne
      */
     public function morphOne($related, $name, $type = null, $id = null, $localKey = null)
@@ -134,10 +134,10 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define an inverse one-to-one or many relationship.
      *
-     * @param  string  $related
-     * @param  string  $foreignKey
-     * @param  string  $ownerKey
-     * @param  string  $relation
+     * @param  string $related
+     * @param  string $foreignKey
+     * @param  string $ownerKey
+     * @param  string $relation
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relationName = null)
@@ -169,9 +169,9 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a polymorphic, inverse one-to-one or many relationship.
      *
-     * @param  string  $name
-     * @param  string  $type
-     * @param  string  $id
+     * @param  string $name
+     * @param  string $type
+     * @param  string $id
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function morphTo($name = null, $type = null, $id = null)
@@ -198,9 +198,9 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a polymorphic, inverse one-to-one or many relationship.
      *
-     * @param  string  $name
-     * @param  string  $type
-     * @param  string  $id
+     * @param  string $name
+     * @param  string $type
+     * @param  string $id
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     protected function morphEagerTo($name, $type, $id)
@@ -215,10 +215,10 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a polymorphic, inverse one-to-one or many relationship.
      *
-     * @param  string  $target
-     * @param  string  $name
-     * @param  string  $type
-     * @param  string  $id
+     * @param  string $target
+     * @param  string $name
+     * @param  string $type
+     * @param  string $id
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     protected function morphInstanceTo($target, $name, $type, $id)
@@ -237,7 +237,7 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Retrieve the actual class name for a given morph class.
      *
-     * @param  string  $class
+     * @param  string $class
      * @return string
      */
     public static function getActualClassNameForMorph($class)
@@ -261,9 +261,9 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a one-to-many relationship.
      *
-     * @param  string  $related
-     * @param  string  $foreignKey
-     * @param  string  $localKey
+     * @param  string $related
+     * @param  string $foreignKey
+     * @param  string $localKey
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function hasMany($related, $foreignKey = null, $localKey = null)
@@ -282,11 +282,11 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a has-many-through relationship.
      *
-     * @param  string  $related
-     * @param  string  $through
-     * @param  string|null  $firstKey
-     * @param  string|null  $secondKey
-     * @param  string|null  $localKey
+     * @param  string      $related
+     * @param  string      $through
+     * @param  string|null $firstKey
+     * @param  string|null $secondKey
+     * @param  string|null $localKey
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
     public function hasManyThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
@@ -311,11 +311,11 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a polymorphic one-to-many relationship.
      *
-     * @param  string  $related
-     * @param  string  $name
-     * @param  string  $type
-     * @param  string  $id
-     * @param  string  $localKey
+     * @param  string $related
+     * @param  string $name
+     * @param  string $type
+     * @param  string $id
+     * @param  string $localKey
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function morphMany($related, $name, $type = null, $id = null, $localKey = null)
@@ -339,11 +339,11 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a many-to-many relationship.
      *
-     * @param  string  $related
-     * @param  string  $table
-     * @param  string  $foreignKey
-     * @param  string  $relatedKey
-     * @param  string  $relation
+     * @param  string $related
+     * @param  string $table
+     * @param  string $foreignKey
+     * @param  string $relatedKey
+     * @param  string $relation
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
 
@@ -378,53 +378,53 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Define a polymorphic many-to-many relationship.
      *
-     * @param  string  $related
-     * @param  string  $name
-     * @param  string  $table
-     * @param  string  $foreignKey
-     * @param  string  $relatedKey
-     * @param  bool  $inverse
+     * @param  string $related
+     * @param  string $name
+     * @param  string $table
+     * @param  string $foreignKey
+     * @param  string $relatedKey
+     * @param  bool   $inverse
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     
-    public function morphToMany($related, $name, $table = NULL, $foreignKey = NULL, $relatedKey = NULL, $parentKey = NULL, $relatedKey1 = NULL, $inverse = false)
+    public function morphToMany($related, $name, $table = null, $foreignKey = null, $relatedKey = null, $parentKey = null, $relatedKey1 = null, $inverse = false)
     {
         throw (new Exception("morphMany not implemented"));
         
-//        $caller = $this->guessBelongsToManyRelation();
-//
-//        // First, we will need to determine the foreign key and "other key" for the
-//        // relationship. Once we have determined the keys we will make the query
-//        // instances, as well as the relationship instances we need for these.
-//        $instance = $this->newRelatedInstance($related);
-//
-//        $foreignKey = $foreignKey ?: $name.'_id';
-//
-//        $relatedKey = $relatedKey ?: $instance->getForeignKey();
-//
-//        // Now we're ready to create a new query builder for this related model and
-//        // the relationship instances for this relation. This relations will set
-//        // appropriate query constraints then entirely manages the hydrations.
-//        $table = $table ?: Str::plural($name);
-//
-//        return new MorphToMany(
-//            $instance->newQuery(), $this->model, $name, $table,
-//            $foreignKey, $relatedKey, $caller, $inverse
-//        );
+        //        $caller = $this->guessBelongsToManyRelation();
+        //
+        //        // First, we will need to determine the foreign key and "other key" for the
+        //        // relationship. Once we have determined the keys we will make the query
+        //        // instances, as well as the relationship instances we need for these.
+        //        $instance = $this->newRelatedInstance($related);
+        //
+        //        $foreignKey = $foreignKey ?: $name.'_id';
+        //
+        //        $relatedKey = $relatedKey ?: $instance->getForeignKey();
+        //
+        //        // Now we're ready to create a new query builder for this related model and
+        //        // the relationship instances for this relation. This relations will set
+        //        // appropriate query constraints then entirely manages the hydrations.
+        //        $table = $table ?: Str::plural($name);
+        //
+        //        return new MorphToMany(
+        //            $instance->newQuery(), $this->model, $name, $table,
+        //            $foreignKey, $relatedKey, $caller, $inverse
+        //        );
     }
 
     /**
      * Define a polymorphic, inverse many-to-many relationship.
      *
-     * @param  string  $related
-     * @param  string  $name
-     * @param  string  $table
-     * @param  string  $foreignKey
-     * @param  string  $relatedKey
+     * @param  string $related
+     * @param  string $name
+     * @param  string $table
+     * @param  string $foreignKey
+     * @param  string $relatedKey
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     
-    public function morphedByMany($related, $name, $table = NULL, $foreignPivotKey = NULL, $relatedPivotKey = NULL, $parentKey = NULL, $relatedKey = NULL)
+    public function morphedByMany($related, $name, $table = null, $foreignPivotKey = null, $relatedPivotKey = null, $parentKey = null, $relatedKey = null)
     {
         throw(new Exception("morphMany not implemented"));
 
@@ -437,9 +437,11 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
      */
     protected function guessBelongsToManyRelation()
     {
-        $caller = Arr::first(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), function ($trace) {
-            return ! in_array($trace['function'], Model::$manyMethods);
-        });
+        $caller = Arr::first(
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), function ($trace) {
+                return ! in_array($trace['function'], Model::$manyMethods);
+            }
+        );
 
         return ! is_null($caller) ? $caller['function'] : null;
     }
@@ -447,7 +449,7 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Get the joining table name for a many-to-many relation.
      *
-     * @param  string  $related
+     * @param  string $related
      * @return string
      */
     public function joiningTable($related)
@@ -471,9 +473,9 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Get the polymorphic relationship columns.
      *
-     * @param  string  $name
-     * @param  string  $type
-     * @param  string  $id
+     * @param  string $name
+     * @param  string $type
+     * @param  string $id
      * @return array
      */
     protected function getMorphs($name, $type, $id)
@@ -500,16 +502,18 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     /**
      * Create a new model instance for a related model.
      *
-     * @param  string  $class
+     * @param  string $class
      * @return mixed
      */
     protected function newRelatedInstance($class)
     {
-        return tap(new $class, function ($instance) {
-            if (! $instance->getConnectionName()) {
-                $instance->setConnection($this->connection);
+        return tap(
+            new $class, function ($instance) {
+                if (! $instance->getConnectionName()) {
+                    $instance->setConnection($this->connection);
+                }
             }
-        });
+        );
     }
     
     

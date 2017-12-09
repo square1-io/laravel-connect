@@ -23,7 +23,7 @@ class InjectedBuilder extends Builder
     /**
      * Create a new database Schema manager.
      *
-     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Illuminate\Database\Connection $connection
      * @return void
      */
     public function __construct(MigrationInspector $inspector)
@@ -31,11 +31,11 @@ class InjectedBuilder extends Builder
         $this->inspector = $inspector;
     }
     
-   /**
+    /**
      * Create a new command set with a Closure.
      *
-     * @param  string  $table
-     * @param  \Closure|null  $callback
+     * @param  string        $table
+     * @param  \Closure|null $callback
      * @return \Illuminate\Database\Schema\Blueprint
      */
     protected function createBlueprint($table, Closure $callback = null)
@@ -52,7 +52,7 @@ class InjectedBuilder extends Builder
     /**
      * Execute the blueprint to build / modify the table.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Database\Schema\Blueprint $blueprint
      * @return void
      */
     protected function build(Blueprint $blueprint)
@@ -65,7 +65,7 @@ class InjectedBuilder extends Builder
     /**
      * Determine if the given table exists.
      *
-     * @param  string  $table
+     * @param  string $table
      * @return bool
      */
     public function hasTable($table)
@@ -76,8 +76,8 @@ class InjectedBuilder extends Builder
     /**
      * Determine if the given table has a given column.
      *
-     * @param  string  $table
-     * @param  string  $column
+     * @param  string $table
+     * @param  string $column
      * @return bool
      */
     public function hasColumn($table, $column)
@@ -90,8 +90,8 @@ class InjectedBuilder extends Builder
     /**
      * Determine if the given table has given columns.
      *
-     * @param  string  $table
-     * @param  array   $columns
+     * @param  string $table
+     * @param  array  $columns
      * @return bool
      */
     public function hasColumns($table, array $columns)
@@ -110,8 +110,8 @@ class InjectedBuilder extends Builder
     /**
      * Get the data type for the given column name.
      *
-     * @param  string  $table
-     * @param  string  $column
+     * @param  string $table
+     * @param  string $column
      * @return string
      */
     public function getColumnType($table, $column)
@@ -124,7 +124,7 @@ class InjectedBuilder extends Builder
     /**
      * Get the column listing for a given table.
      *
-     * @param  string  $table
+     * @param  string $table
      * @return array
      */
     public function getColumnListing($table)
@@ -139,8 +139,8 @@ class InjectedBuilder extends Builder
     /**
      * Modify a table on the schema.
      *
-     * @param  string    $table
-     * @param  \Closure  $callback
+     * @param  string   $table
+     * @param  \Closure $callback
      * @return \Illuminate\Database\Schema\Blueprint
      */
     public function table($table, Closure $callback)
@@ -151,8 +151,8 @@ class InjectedBuilder extends Builder
     /**
      * Create a new table on the schema.
      *
-     * @param  string    $table
-     * @param  \Closure  $callback
+     * @param  string   $table
+     * @param  \Closure $callback
      * @return \Illuminate\Database\Schema\Blueprint
      */
     public function create($table, Closure $callback)
@@ -169,7 +169,7 @@ class InjectedBuilder extends Builder
     /**
      * Drop a table from the schema.
      *
-     * @param  string  $table
+     * @param  string $table
      * @return \Illuminate\Database\Schema\Blueprint
      */
     public function drop($table)
@@ -184,7 +184,7 @@ class InjectedBuilder extends Builder
     /**
      * Drop a table from the schema if it exists.
      *
-     * @param  string  $table
+     * @param  string $table
      * @return \Illuminate\Database\Schema\Blueprint
      */
     public function dropIfExists($table)
@@ -199,8 +199,8 @@ class InjectedBuilder extends Builder
     /**
      * Rename a table on the schema.
      *
-     * @param  string  $from
-     * @param  string  $to
+     * @param  string $from
+     * @param  string $to
      * @return \Illuminate\Database\Schema\Blueprint
      */
     public function rename($from, $to)
@@ -248,7 +248,7 @@ class InjectedBuilder extends Builder
     /**
      * Set the Schema Blueprint resolver callback.
      *
-     * @param  \Closure  $resolver
+     * @param  \Closure $resolver
      * @return void
      */
     public function blueprintResolver(Closure $resolver)

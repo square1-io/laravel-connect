@@ -23,18 +23,18 @@ class Relation implements Jsonable, Arrayable
     protected $related;
     
      /**
-     * The name of the relationship.
-     *
-     * @var string
-     */
+      * The name of the relationship.
+      *
+      * @var string
+      */
     protected $relationName;
     
    
     /**
      * Create a new relation instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Database\Eloquent\Model   $parent
      * @return void
      */
     public function __construct($related, $parent, $relationName)
@@ -46,10 +46,10 @@ class Relation implements Jsonable, Arrayable
     
     
       /**
-     * indicates if this relation points to one or more related model instances
-     *
-     * @var type boolean
-     */
+       * indicates if this relation points to one or more related model instances
+       *
+       * @var type boolean
+       */
     
     public function relatesToMany()
     {

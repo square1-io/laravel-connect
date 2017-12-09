@@ -25,9 +25,11 @@ class iOSClientWriter extends ClientWriter
         
         //now that patsh are set prepare git for deploy
         // pull previous version
-        $git = new GitDeploy(env('IOS_GIT_REPO'), 
-                $this->client()->baseBuildPath . '/iOS/' ,
-                env('IOS_GIT_BRANCH') );
+        $git = new GitDeploy(
+            env('IOS_GIT_REPO'), 
+            $this->client()->baseBuildPath . '/iOS/',
+            env('IOS_GIT_BRANCH') 
+        );
         
         $git->setDisabled(env('IOS_GIT_DISABLED', false));        
         $git->init();
@@ -54,8 +56,12 @@ class iOSClientWriter extends ClientWriter
             $this->info($className);
             
             //loop over the tables and match members and types
-            $members = $this->buildSwiftMembers(array_merge($inspector->getDynamicAttributes(),
-                 $tableMap[$inspector->tableName()]['attributes']) , $className);
+            $members = $this->buildSwiftMembers(
+                array_merge(
+                    $inspector->getDynamicAttributes(),
+                    $tableMap[$inspector->tableName()]['attributes']
+                ), $className
+            );
   
             $members_test[$className] = $members;
 
@@ -83,8 +89,8 @@ class iOSClientWriter extends ClientWriter
                 }
 
                     $el = $xml->createElement("entry");
-                    $el->setAttribute("key","laravel.json.key" );
-                    $el->setAttribute("value", $member['json_key'] );
+                    $el->setAttribute("key", "laravel.json.key");
+                    $el->setAttribute("value", $member['json_key']);
                     $userInfo->appendChild($el);
 
                 $newElement->appendChild($userInfo);
@@ -117,14 +123,14 @@ class iOSClientWriter extends ClientWriter
                 } else {
                     $newElement->setAttribute("maxCount", "1");
                     $el = $xml->createElement("entry");
-                    $el->setAttribute("key","laravel.model.foreignKey" );
-                    $el->setAttribute("value", $relation['key'] );
+                    $el->setAttribute("key", "laravel.model.foreignKey");
+                    $el->setAttribute("value", $relation['key']);
                     $userInfo->appendChild($el);
                 }
 
                 $el = $xml->createElement("entry");
-                $el->setAttribute("key","laravel.json.key" );
-                $el->setAttribute("value", $relation['name'] );
+                $el->setAttribute("key", "laravel.json.key");
+                $el->setAttribute("value", $relation['name']);
                 $userInfo->appendChild($el);
 
                 $coredata_entity->appendChild($newElement);
@@ -150,7 +156,7 @@ class iOSClientWriter extends ClientWriter
             unset($tableMap[$inspector->tableName()]);
 
             
-            $swift = view("ios::master", compact('classPath','relations', 'members', 'package', 'className', 'primaryKey', 'endpoints'))->render();
+            $swift = view("ios::master", compact('classPath', 'relations', 'members', 'package', 'className', 'primaryKey', 'endpoints'))->render();
             $this->client()->files->put($path . "/" . $className . "+CoreDataClass.swift", $swift);
         }
         $xmlModel->appendChild($xmlElements);
@@ -222,14 +228,16 @@ class iOSClientWriter extends ClientWriter
     }
 
     //@[@"type", @"description", @"signed"];
-    public function getSwiftVariableName($attributeName, $className){
+    public function getSwiftVariableName($attributeName, $className)
+    {
        
         $prefix = config("connect.clients.ios.prefix");
-        if(empty($prefix)){
+        if(empty($prefix)) {
 
-            if("description" === $attributeName || 
-            "type" === $attributeName  || 
-            "signed" === $attributeName ){
+            if("description" === $attributeName  
+                || "type" === $attributeName   
+                || "signed" === $attributeName 
+            ) {
                 $attributeName = $className."_".$attributeName;
             }
 
@@ -242,7 +250,7 @@ class iOSClientWriter extends ClientWriter
     private function buildSwiftMembers($attributes, $className)
     {
         $members = array();
-        $prefix = config("connect.clients.ios.prefix","cn");
+        $prefix = config("connect.clients.ios.prefix", "cn");
         foreach ($attributes as $attribute) {
             $attribute = is_array($attribute) ? $attribute[0] : $attribute;
             $this->info("$attribute", 'vvv');
@@ -258,7 +266,7 @@ class iOSClientWriter extends ClientWriter
 
             $references = isset($attribute->foreignKey) ? $attribute->foreignKey : null;
             if (!empty($type)) {
-                $members[] = compact('json_key','dynamic', 'xmlType', 'collection', 'varName', 'name', 'type', 'primaryKey', 'references');
+                $members[] = compact('json_key', 'dynamic', 'xmlType', 'collection', 'varName', 'name', 'type', 'primaryKey', 'references');
             }
         }
 
@@ -360,10 +368,11 @@ class iOSClientWriter extends ClientWriter
             $type = $type->type;
         }
         
-        if ($type == 'text' ||
-                $type == 'char' ||
-                $type == 'string' ||
-                $type == 'enum') {
+        if ($type == 'text' 
+            || $type == 'char' 
+            || $type == 'string' 
+            || $type == 'enum'
+        ) {
             return 'String';
         }
 
@@ -396,16 +405,18 @@ class iOSClientWriter extends ClientWriter
 
     public function resolveToSwiftType($type)
     {
-        if ($type == 'text' ||
-                $type == 'char' ||
-                $type == 'string' ||
-                $type == 'enum') {
+        if ($type == 'text' 
+            || $type == 'char' 
+            || $type == 'string' 
+            || $type == 'enum'
+        ) {
             return 'String';
         }
 
-        if ($type == 'timestamp' ||
-                $type == 'date' ||
-                $type == 'dateTime') {
+        if ($type == 'timestamp' 
+            || $type == 'date' 
+            || $type == 'dateTime'
+        ) {
             return 'NSDate';
         }
 

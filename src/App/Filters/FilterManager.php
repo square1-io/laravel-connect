@@ -13,7 +13,8 @@ use Square1\Laravel\Connect\App\Filters\Filter;
 use Square1\Laravel\Connect\App\Filters\Criteria;
 
 
-class FilterManager implements Arrayable{
+class FilterManager implements Arrayable
+{
     
     private $filters;
    
@@ -40,27 +41,30 @@ class FilterManager implements Arrayable{
 
     public function apply($query, $model)
     {
-        $first = TRUE;
+        $first = true;
         
         foreach ($this->filters as $filter)
         {
 
-            if($first == TRUE)
-            {
-              $query->where(function($q) use($filter, $model){
-                  $filter->apply($q, $model);
+            if($first == true) {
+                $query->where(
+                    function ($q) use ($filter, $model) {
+                        $filter->apply($q, $model);
                   
-              });
+                    }
+                );
             }
             else// apply the OR clause 
             {
-               $query->orWhere(function($q) use($filter, $model){
-                     $filter->apply($q, $model);
-                });
+                $query->orWhere(
+                    function ($q) use ($filter, $model) {
+                        $filter->apply($q, $model);
+                    }
+                );
                 
             }
             
-            $first = FALSE;
+            $first = false;
         }
     
         return $query;
@@ -70,15 +74,15 @@ class FilterManager implements Arrayable{
    
     
     /**
-     *  
               "filter[0][medias.event_id][equal][0]": eventId,
               "filter[0][medias.event_id][equal][1]": 5,
               "filter[0][id][equal][1]": 52323,
               "filter[1][medias.event_id][equal][0]": 666,
               "filter[1][medias.event_id][equal][1]": 666,
               "filter[1][id][equal][1]": 52323
-     * @param type $model
-     * @param type $array
+     *
+     * @param  type $model
+     * @param  type $array
      * @return \Square1\Laravel\Connect\App\Filters\FilterManager
      */
     
@@ -92,8 +96,7 @@ class FilterManager implements Arrayable{
         {
             $filter = static::buildFilterFromArray($filterData);
             
-            if(isset($filter))
-            {
+            if(isset($filter)) {
                 $filterManager->addFilter($filter);
             }
         }
@@ -103,9 +106,8 @@ class FilterManager implements Arrayable{
     
     public static function buildFilterFromArray($filterData)
     {
-        if(!is_array($filterData))
-        {
-            return NULL;
+        if(!is_array($filterData)) {
+            return null;
         }
         
         $filter = new Filter();
@@ -114,8 +116,7 @@ class FilterManager implements Arrayable{
         {
             foreach ($criterias as $verb => $value)
             {
-                if(is_array($value))
-                {
+                if(is_array($value)) {
                     foreach ($value as $v)
                     {
                         $criteria = new Criteria($paramName, $v, $verb);
@@ -134,7 +135,8 @@ class FilterManager implements Arrayable{
     }
 
     
-    public function toArray() {
+    public function toArray() 
+    {
        
         $result = [];
         

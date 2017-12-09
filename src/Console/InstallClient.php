@@ -42,9 +42,9 @@ class InstallClient extends Command
     /**
      * Create a new migrator instance.
      *
-     * @param  \Illuminate\Database\Migrations\MigrationRepositoryInterface  $repository
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
-     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @param  \Illuminate\Database\Migrations\MigrationRepositoryInterface $repository
+     * @param  \Illuminate\Database\ConnectionResolverInterface             $resolver
+     * @param  \Illuminate\Filesystem\Filesystem                            $files
      * @return void
      */
     public function __construct(Filesystem $files)

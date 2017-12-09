@@ -11,13 +11,15 @@ use Illuminate\Contracts\Support\Arrayable;
 use Square1\Laravel\Connect\App\Filters\Criteria;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
-class Filter implements Arrayable {
+class Filter implements Arrayable
+{
    
     private $criteria;
     private $relationCriteria;
     
  
-    public function __construct() {
+    public function __construct() 
+    {
        
         $this->criteria = [];
         $this->relationCriteria = [];        
@@ -26,10 +28,8 @@ class Filter implements Arrayable {
 
     public function addCriteria(Criteria $criteria)
     {
-        if($criteria->onRelation() == TRUE)
-        {
-            if(!isset($this->relationCriteria[$criteria->relation()]))
-            {
+        if($criteria->onRelation() == true) {
+            if(!isset($this->relationCriteria[$criteria->relation()])) {
                 $this->relationCriteria[$criteria->relation()] = [];
             }
             
@@ -56,18 +56,19 @@ class Filter implements Arrayable {
             //is this a legitimate relation ?
             $relatedModelTable = $this->getRelationTable($model, $relation);
             
-            if(!$relatedModelTable)
-            {
+            if(!$relatedModelTable) {
                 continue;// ingnore this is not a relation on the model.
             }
             // we found a relation on this model 
-            $query->whereHas($relation, function($q) use($criteria, $relatedModelTable){  
-                //add all the criterias for this relation 
-                foreach ($criteria as $c)
-                {
-                     $c->apply($q, $relatedModelTable);
-                }  
-            });
+            $query->whereHas(
+                $relation, function ($q) use ($criteria, $relatedModelTable) {  
+                    //add all the criterias for this relation 
+                    foreach ($criteria as $c)
+                    {
+                         $c->apply($q, $relatedModelTable);
+                    }  
+                }
+            );
         }        
         
         return $query;
@@ -79,34 +80,32 @@ class Filter implements Arrayable {
      * this method ensure that filters are applied only to the model 
      * or to actual relations.
      * 
-     * @param Filter $filter
+     * @param  Filter $filter
      * @return boolean
      */
     private function getRelationTable($model, $relation)
     {
         $relation = $model->$relation();
 
-        if($relation instanceof Relation){
+        if($relation instanceof Relation) {
                 return $relation->getRelated()->getTable();
         }
 
-        return FALSE;
+        return false;
     }
     
-      public function toArray() 
-      {
+    public function toArray() 
+    {
           
         $result = [];
 
         foreach ($this->criteria as $criteria)
         {
-            if(!isset($result[$criteria->name()]))
-            {
+            if(!isset($result[$criteria->name()])) {
                 $result[$criteria->name()] = [];
             }
             
-            if(!isset($result[$criteria->name()][$criteria->verb()]))
-            {
+            if(!isset($result[$criteria->name()][$criteria->verb()])) {
                 $result[$criteria->name()][$criteria->verb()] = [];
             }
             
@@ -114,6 +113,6 @@ class Filter implements Arrayable {
         }
           
         return $result;
-      }
+    }
     
 }

@@ -30,9 +30,9 @@ class ConnectDefaultModelRepository implements ConnectRepository
     /**
      * Get a paginated list of all the instances of the current model.
      *
-     * @param array $with Eager load models
-     * @param int $perPage set the number of elemets per page
-     * @param array $filter the array representation of a FilterManager object
+     * @param array $with    Eager load models
+     * @param int   $perPage set the number of elemets per page
+     * @param array $filter  the array representation of a FilterManager object
      * @param array $sort_by a list of sorting preferences
      *
      * @return Illuminate\Database\Eloquent\Collection
@@ -42,20 +42,20 @@ class ConnectDefaultModelRepository implements ConnectRepository
         $filter =  FilterManager::buildFromArray($this->model, $filter);
           
         return $this->model->with($with)->filter($filter)
-                ->order($sort_by)
-                ->paginate(intval($perPage));
+            ->order($sort_by)
+            ->paginate(intval($perPage));
     }
     
     /**
      *  Get a paginated list of all the instances of the current related model(s).
      *  This treats in the same toMany and toOne relations, a collection will be returned in all cases.
      *
-     * @param int $parentId the id of the parent model
+     * @param int    $parentId     the id of the parent model
      * @param String $relationName the name of the relationship to fetch
-     * @param array $with Eager load models
-     * @param int $perPage set the number of elemets per page
-     * @param array $filter the array representation of a FilterManager object
-     * @param array $sort_by a list of sorting preferences
+     * @param array  $with         Eager load models
+     * @param int    $perPage      set the number of elemets per page
+     * @param array  $filter       the array representation of a FilterManager object
+     * @param array  $sort_by      a list of sorting preferences
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
@@ -73,9 +73,9 @@ class ConnectDefaultModelRepository implements ConnectRepository
             $filter = FilterManager::buildFromArray($relatedModel, $filter);
              
             return $relation->with($with)
-                    ->filter($filter)
-                    ->order($sort_by)
-                    ->paginate(intval($perPage));
+                ->filter($filter)
+                ->order($sort_by)
+                ->paginate(intval($perPage));
         }
         return null;
     }
@@ -83,10 +83,10 @@ class ConnectDefaultModelRepository implements ConnectRepository
     public function show($id, $with = [])
     {
         return $this->model
-                ->with($with)
-                ->where('id', $id)
-                ->get()
-                ->first();
+            ->with($with)
+            ->where('id', $id)
+            ->get()
+            ->first();
     }
     
     
@@ -172,21 +172,21 @@ class ConnectDefaultModelRepository implements ConnectRepository
         } elseif ($relation instanceof HasMany) {
             $relation->save($related);
         }
-//        else if($relation instanceof MorphTo){
-//
-//        }
-//        else if($relation instanceof MorphOne){
-//
-//        }
-//        else if($relation instanceof MorphMany){
-//
-//        }
-//        else if($relation instanceof MorphToMany){
-//
-//        }
-//        else if($relation instanceof HasManyThrough){
-//
-//        }
+        //        else if($relation instanceof MorphTo){
+        //
+        //        }
+        //        else if($relation instanceof MorphOne){
+        //
+        //        }
+        //        else if($relation instanceof MorphMany){
+        //
+        //        }
+        //        else if($relation instanceof MorphToMany){
+        //
+        //        }
+        //        else if($relation instanceof HasManyThrough){
+        //
+        //        }
 
         $model->save();
         
@@ -210,21 +210,21 @@ class ConnectDefaultModelRepository implements ConnectRepository
             $relationModel->setAttribute($relation->getForeignKeyName(), 0);
             $relationModel->save();
         }
-//        else if($relation instanceof MorphTo){
-//
-//        }
-//        else if($relation instanceof MorphOne){
-//
-//        }
-//        else if($relation instanceof MorphMany){
-//
-//        }
-//        else if($relation instanceof MorphToMany){
-//
-//        }
-//        else if($relation instanceof HasManyThrough){
-//
-//        }
+        //        else if($relation instanceof MorphTo){
+        //
+        //        }
+        //        else if($relation instanceof MorphOne){
+        //
+        //        }
+        //        else if($relation instanceof MorphMany){
+        //
+        //        }
+        //        else if($relation instanceof MorphToMany){
+        //
+        //        }
+        //        else if($relation instanceof HasManyThrough){
+        //
+        //        }
         elseif ($relation instanceof BelongsTo) {
             $relation->dissociate();
         } elseif ($relation instanceof BelongsToMany) {
@@ -403,13 +403,12 @@ class ConnectDefaultModelRepository implements ConnectRepository
      *  Store uploaded files in the defined storage.
      *  Place then in a subfolder named as the endpoint reference for the model
      *
-     *  @param UploadedFile $file, the uploaded file
+     * @param UploadedFile $file, the uploaded file
      *
-     *  @return String an appropriate representation of the location where the file was stored
-     *
+     * @return String an appropriate representation of the location where the file was stored
      */
-     public function storeUploadedFile($file)
-     {
-         return Storage::putFile($this->model->endpointReference(), $file);
-     }
+    public function storeUploadedFile($file)
+    {
+        return Storage::putFile($this->model->endpointReference(), $file);
+    }
 }

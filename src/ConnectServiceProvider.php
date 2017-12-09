@@ -24,26 +24,32 @@ class ConnectServiceProvider extends ServiceProvider
         
         //registering 3rd party service providers
     
-       //laravel passport, no need to register routes for this
-       $this->app->register('Laravel\Passport\PassportServiceProvider');
+        //laravel passport, no need to register routes for this
+        $this->app->register('Laravel\Passport\PassportServiceProvider');
       
 
         if ($this->app->runningInConsole()) {
             $this->loadViewsFrom(__DIR__ . '/views/client/android', 'android');
             $this->loadViewsFrom(__DIR__ . '/views/client/iOS', 'ios');
              
-            $this->commands([
-               MakeClient::class,
-               InitClient::class,
-               InstallClient::class
-            ]);
+            $this->commands(
+                [
+                MakeClient::class,
+                InitClient::class,
+                InstallClient::class
+                ]
+            );
         }
         
-        Response::macro('connect', function ($value, $status = 200) {
-            return Response::json([
-                'data' => $value,
-            ], $status);
-        });
+        Response::macro(
+            'connect', function ($value, $status = 200) {
+                return Response::json(
+                    [
+                    'data' => $value,
+                    ], $status
+                );
+            }
+        );
         
         //Registering routes
         //Passport::routes(null, ['prefix' => config('connect.api.prefix').'/passport']);
@@ -64,18 +70,20 @@ class ConnectServiceProvider extends ServiceProvider
     /**
      * Load the standard routes file for the application.
      *
-     * @param  string  $path
+     * @param  string $path
      * @return mixed
      */
     protected function loadRoutesFrom($path)
     {
-        Route::group([
+        Route::group(
+            [
             'middleware' => ['connect'],
             'namespace' => 'Square1\Laravel\Connect\App\Http\Controllers',
             'prefix' => config('connect.api.prefix'),
              'as' => 'connect.'
-        ], function ($router) use ($path) {
-            require $path;
-        });
+            ], function ($router) use ($path) {
+                include $path;
+            }
+        );
     }
 }

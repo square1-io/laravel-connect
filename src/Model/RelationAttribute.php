@@ -36,10 +36,9 @@ class RelationAttribute
 
     /**
      *
-     * @param string $name the name of this relationship
-     * @param string $type the type of the relationship
+     * @param string $name  the name of this relationship
+     * @param string $type  the type of the relationship
      * @param string $model the model class that this reference to
-     *
      */
     
     public function __construct($name, $type, $model)

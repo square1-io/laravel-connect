@@ -9,7 +9,8 @@ namespace Square1\Laravel\Connect\App\Filters;
 
 use Illuminate\Support\Str;
 
-class Criteria {
+class Criteria
+{
    
     const CONTAINS = "contains";
     const EQUAL = "equal";
@@ -31,14 +32,14 @@ class Criteria {
     private $verb;
     
 
-    public function __construct($name, $value, $verb) {
+    public function __construct($name, $value, $verb) 
+    {
         
         $this->name = $name;
         
         $exploded = explode('.', $name);
         
-        if(count($exploded) == 2)
-        {
+        if(count($exploded) == 2) {
             $this->relation = $exploded[0]; 
             $this->param = $exploded[1];
         }
@@ -55,7 +56,7 @@ class Criteria {
     
     public function onRelation()
     {
-        return strlen( $this->relation) > 0;
+        return strlen($this->relation) > 0;
     }
 
     public function relation()
@@ -78,18 +79,18 @@ class Criteria {
         return $this->value;
     }    
     
-    public function apply($query, $table = ''){
+    public function apply($query, $table = '')
+    {
         
-         if(strlen($table) > 0)
-         {
+        if(strlen($table) > 0) {
             $name = $table.'.'.$this->param;
              
-         }else
+        }else
          {
             $name = $this->param;
-         }
+        }
        
-       if ($this->verb === "contains") {
+        if ($this->verb === "contains") {
             $query->where($name, 'like', '%' . $this->value . '%');
         } elseif ($this->verb === "equal") {
             $query->where($name, $this->value);

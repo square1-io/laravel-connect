@@ -42,12 +42,12 @@ class RelationBelongsToMany extends Relation
     /**
      * Create a new belongs to many relationship instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  string  $table
-     * @param  string  $foreignKey
-     * @param  string  $relatedKey
-     * @param  string  $relationName
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Database\Eloquent\Model   $parent
+     * @param  string                                $table
+     * @param  string                                $foreignKey
+     * @param  string                                $relatedKey
+     * @param  string                                $relationName
      * @return void
      */
     public function __construct($related, $parent, $table, $foreignKey, $relatedKey, $relationName = null)

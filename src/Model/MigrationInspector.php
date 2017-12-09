@@ -28,16 +28,17 @@ class MigrationInspector
     private $commands;
      
      /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
+      * The filesystem instance.
+      *
+      * @var \Illuminate\Filesystem\Filesystem
+      */
     protected $files;
 
      /**
-     * Create a new  instance.
-     * @return void
-     */
+      * Create a new  instance.
+      *
+      * @return void
+      */
     public function __construct($className, Filesystem $files, MakeClient $client)
     {
         $this->files = $files;
@@ -83,7 +84,7 @@ class MigrationInspector
         }
         
         $this->files->put($fileName, $baseCode);
-        require_once($fileName);
+        include_once $fileName;
         
         return new $injectedClassName($this);
     }
@@ -106,19 +107,19 @@ class MigrationInspector
 
     
        /**
-     * Create a new command set with a Closure.
-     *
-     * @param  string  $table
-     * @param  \Closure|null  $callback
-     * @return \Illuminate\Database\Schema\Blueprint
-     */
-     public function createBlueprint($table, Closure $callback = null)
-     {
-         if (!array_key_exists($table, $this->bluePrints)) {
-             $this->bluePrints[$table] = new ApiClientBlueprint($this, $table, $callback);
-         }
-         return $this->bluePrints[$table];
-     }
+        * Create a new command set with a Closure.
+        *
+        * @param  string        $table
+        * @param  \Closure|null $callback
+        * @return \Illuminate\Database\Schema\Blueprint
+        */
+    public function createBlueprint($table, Closure $callback = null)
+    {
+        if (!array_key_exists($table, $this->bluePrints)) {
+            $this->bluePrints[$table] = new ApiClientBlueprint($this, $table, $callback);
+        }
+        return $this->bluePrints[$table];
+    }
     
     public function inspectionCompleted()
     {

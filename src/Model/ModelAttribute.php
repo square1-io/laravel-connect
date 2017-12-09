@@ -20,33 +20,33 @@ class ModelAttribute
     const TYPE_STRING = 'string';
     const TYPE_TIME_STAMP = 'time_stamp';
     
-//    public $type;
-//    public $name;
-//    public $references;
-//    public $on;
-//    public $update;
-//    public $allowed;
-//
-//    public $collection;
-//
-//    public $dynamic;
+    //    public $type;
+    //    public $name;
+    //    public $references;
+    //    public $on;
+    //    public $update;
+    //    public $allowed;
+    //
+    //    public $collection;
+    //
+    //    public $dynamic;
 
     public $fluent;
     
-   // public $foreignKey;
+    // public $foreignKey;
     
     
     
     public function __construct(Fluent $fluent)
     {
         $this->fluent = $fluent;
-//        $this->name = $name;
-//        $this->type = $type;
-//        $this->references = $references;
-//        $this->on = $on;
-//        $this->update = $isUpdate;
-//        $this->collection = FALSE;
-//        $this->dynamic = FALSE;
+        //        $this->name = $name;
+        //        $this->type = $type;
+        //        $this->references = $references;
+        //        $this->on = $on;
+        //        $this->update = $isUpdate;
+        //        $this->collection = FALSE;
+        //        $this->dynamic = FALSE;
     }
     
     
@@ -78,8 +78,8 @@ class ModelAttribute
     
     public function __toString()
     {
-        if (!empty($this->on) && !
-                empty($this->references)) {
+        if (!empty($this->on) && !            empty($this->references)
+        ) {
             return "att:$this->name:ref:$this->references:on:$this->on";
         }
         return "att:$this->name:$this->type";
@@ -96,21 +96,21 @@ class ModelAttribute
         }
         
         switch ($this->type) {
-            case 'boolean':
-                return true;
-            case 'double':
-            case 'float':
-                return 1.1;
-             case 'tinyint':
-             case 'integer':
-                return 1;
-            case 'text':
-            case 'string':
-                return "string";
-            case 'date':
-            case 'dateTime':
-            case 'timestamp':
-                return Carbon::now(new DateTimeZone('Europe/London'));
+        case 'boolean':
+            return true;
+        case 'double':
+        case 'float':
+            return 1.1;
+        case 'tinyint':
+        case 'integer':
+            return 1;
+        case 'text':
+        case 'string':
+            return "string";
+        case 'date':
+        case 'dateTime':
+        case 'timestamp':
+            return Carbon::now(new DateTimeZone('Europe/London'));
         }
         
         if ($this->type == null) {

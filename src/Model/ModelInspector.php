@@ -36,16 +36,17 @@ class ModelInspector
     private $endpointReference;
 
      /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
+      * The filesystem instance.
+      *
+      * @var \Illuminate\Filesystem\Filesystem
+      */
     protected $files;
 
      /**
-     * Create a new  instance.
-     * @return void
-     */
+      * Create a new  instance.
+      *
+      * @return void
+      */
     public function __construct($className, Filesystem $files, MakeClient $client)
     {
         $this->files = $files;
@@ -122,7 +123,7 @@ class ModelInspector
         }
         
         $this->files->put($fileName, $baseCode);
-        require_once($fileName);
+        include_once $fileName;
         
         return new $injectedClassName;
     }
@@ -162,10 +163,10 @@ class ModelInspector
                 $result = $result->toArray();
                     
                      //is this relation via a separate table ?
-                    if ($relatesToMany && isset($result['table'])) {
-                        $tableAttributes = $this->client->tableMap[$result['table']]["attributes"];
-                        $result['table_attributes'] = $tableAttributes;
-                    }
+                if ($relatesToMany && isset($result['table'])) {
+                    $tableAttributes = $this->client->tableMap[$result['table']]["attributes"];
+                    $result['table_attributes'] = $tableAttributes;
+                }
                 $this->relations[$result['name']] = $result;
                 $this->client->info(" found ".$result['type']." of name ".$result['name']);
             }
@@ -175,14 +176,13 @@ class ModelInspector
     }
 
         /**
-     *
-     * There are a number of methods that we don't have any interests on
-     * we want to remove any method that is not potentially defining a relationship
-     * or a dinamic attribute.
-     *
-     * @param array $out
-     * @param array $dynamicAttributes
-     */
+         * There are a number of methods that we don't have any interests on
+         * we want to remove any method that is not potentially defining a relationship
+         * or a dinamic attribute.
+         *
+         * @param array $out
+         * @param array $dynamicAttributes
+         */
     private function purgedUselessMethods(array& $out, array& $dynamicAttributes)
     {
         $this->client->info('removing unnecesary methods ...', 'vvv');
@@ -196,10 +196,16 @@ class ModelInspector
         //skip methods inherited from traits
         foreach ($traits as $trait) {
             $traitMethods = $trait->getMethods(ReflectionMethod::IS_PUBLIC);
-            $traitsMethods = array_merge($traitsMethods,
-                    array_combine(array_map(function ($o) {
-                        return $o->name;
-                    }, $traitMethods), $traitMethods));
+            $traitsMethods = array_merge(
+                $traitsMethods,
+                array_combine(
+                    array_map(
+                        function ($o) {
+                                return $o->name;
+                        }, $traitMethods
+                    ), $traitMethods
+                )
+            );
         }
         
         foreach ($methods as $method) {
@@ -209,12 +215,14 @@ class ModelInspector
             };
             
             //esclude constructors and methods that take one or more parameters
-            if (strpos($method->name, '_construct') === false &&
-                    empty($method->getParameters()) &&
-                    $method->class == $this->modelInfo->getName()) {//not inherited
+            if (strpos($method->name, '_construct') === false 
+                && empty($method->getParameters()) 
+                && $method->class == $this->modelInfo->getName()
+            ) {//not inherited
                 
-                if (Str::startsWith($method->name, "get") &&
-                        Str::endsWith($method->name, "Attribute")) {
+                if (Str::startsWith($method->name, "get") 
+                    && Str::endsWith($method->name, "Attribute")
+                ) {
                     $dynamicAttributes[$method->name] = $method;
                     
                     $this->client->info("found dynamic attribute $method->name", 'vvv');

@@ -28,9 +28,11 @@ class AndroidClientWriter extends ClientWriter
 
         //now that patsh are set prepare git for deploy
         // pull previous version
-        $git = new GitDeploy(env('ANDROID_GIT_REPO'), 
-                $this->client()->baseBuildPath . '/android/' ,
-                env('ANDROID_GIT_BRANCH') );
+        $git = new GitDeploy(
+            env('ANDROID_GIT_REPO'), 
+            $this->client()->baseBuildPath . '/android/',
+            env('ANDROID_GIT_BRANCH') 
+        );
         
         $git->setDisabled(env('ANDROID_GIT_DISABLED'));
                 
@@ -57,12 +59,12 @@ class AndroidClientWriter extends ClientWriter
         
         //add gradle file
         $gradleFile = $this->client()->files->get(dirname(__FILE__)."/gradle/build.gradle");
-        $this->client()->files->put($this->client()->baseBuildPath . '/android/build.gradle',$gradleFile);
+        $this->client()->files->put($this->client()->baseBuildPath . '/android/build.gradle', $gradleFile);
         
         //add androidManifest.xml file
         $manifestFile = $this->client()->files->get(dirname(__FILE__)."/gradle/src/main/AndroidManifest.xml");
         $manifestFile = str_replace('{{PACKAGE}}', $package, $manifestFile);
-        $this->client()->files->put($this->client()->baseBuildPath . '/android/src/main/AndroidManifest.xml',$manifestFile);
+        $this->client()->files->put($this->client()->baseBuildPath . '/android/src/main/AndroidManifest.xml', $manifestFile);
         
         // deliver to the mobile developer 
         $git->push();
@@ -247,16 +249,18 @@ class AndroidClientWriter extends ClientWriter
 
     public function resolveToJavaType($type)
     {
-        if ($type == 'text' ||
-                $type == 'char' ||
-                $type == 'string' ||
-                $type == 'enum') {
+        if ($type == 'text' 
+            || $type == 'char' 
+            || $type == 'string' 
+            || $type == 'enum'
+        ) {
             return 'String';
         }
 
-        if ($type == 'timestamp' ||
-                $type == 'date' ||
-                $type == 'dateTime') {
+        if ($type == 'timestamp' 
+            || $type == 'date' 
+            || $type == 'dateTime'
+        ) {
             return 'Date';
         }
 

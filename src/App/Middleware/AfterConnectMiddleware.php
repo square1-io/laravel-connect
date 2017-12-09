@@ -20,8 +20,7 @@ class AfterConnectMiddleware
         try{
             $currentUser = ConnectUtils::currentAuthUser($request);
        
-            if($currentUser)
-            {
+            if($currentUser) {
                 Auth::login($currentUser);
             }
         }
@@ -61,7 +60,7 @@ class AfterConnectMiddleware
     /**
      * Check for a Preflight request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return boolean
      */
     protected function isPreflightRequest($request)

@@ -17,10 +17,10 @@ class RelationHasManyThrough extends Relation
 {
 
         /**
-     * The "through" parent model instance.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
+         * The "through" parent model instance.
+         *
+         * @var \Illuminate\Database\Eloquent\Model
+         */
     protected $throughParent;
 
     /**
