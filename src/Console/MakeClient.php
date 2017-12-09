@@ -38,13 +38,14 @@ class MakeClient extends Command
     protected $description = 'Build the LaravelConnect Client ';
     
     /**
-     * Map Database table list of parameters to the table name
      *
+     * Map Database table list of parameters to the table name
      * @var type array
      */
     public $tableMap;
     
     /**
+     *
      * Map of modelInspectors and class name
      *
      * @var type array
@@ -53,6 +54,7 @@ class MakeClient extends Command
     
 
     /**
+     *
      * Map of modelInspectors and the table name used to store this model in the database
      *
      * @var type array
@@ -61,6 +63,7 @@ class MakeClient extends Command
     
     
     /**
+     *
      * the path to the folder where all the models files are stored
      *
      * @var type string
@@ -86,9 +89,9 @@ class MakeClient extends Command
     /**
      * Create a new migrator instance.
      *
-     * @param  \Illuminate\Database\Migrations\MigrationRepositoryInterface $repository
-     * @param  \Illuminate\Database\ConnectionResolverInterface             $resolver
-     * @param  \Illuminate\Filesystem\Filesystem                            $files
+     * @param  \Illuminate\Database\Migrations\MigrationRepositoryInterface  $repository
+     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
+     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @return void
      */
     public function __construct(Filesystem $files)
@@ -108,11 +111,9 @@ class MakeClient extends Command
         //$this->migrationsHandler = new MigrationsHandler($this->files, $this);
        
         
-        set_error_handler(
-            function ($errno, $errstr, $errfile, $errline) {
-                throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
-            }
-        );
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+        });
     }
 
     /**
@@ -172,7 +173,7 @@ class MakeClient extends Command
     {
         $files = $this->files->allFiles($this->modelFolder);
         foreach ($files as $file) {
-            include_once $file;
+            require_once($file);
         }
         
         $classes = get_declared_classes();
@@ -225,7 +226,7 @@ class MakeClient extends Command
             $classPath = $inspector->endpointReference();
             //do not override in case developer wants to use a different class
             if (isset($endpoints[$classPath]) == false) {
-                $repositoryClass = $this->makeRepository($inspector);    
+                $repositoryClass = $this->makeRepository($inspector);
                 $endpoints[$classPath] = $repositoryClass;
             }
         }
@@ -267,7 +268,7 @@ class MakeClient extends Command
     {
         $fileName =  $this->baseTmpPath.'/'.$fileName.'.json';
       
-        $this->files->delete($fileName);
+        $this->files->delete($fileName) ;
         $this->files->put($fileName, json_encode($object));
     }
 
@@ -299,24 +300,21 @@ class MakeClient extends Command
     /**
      * create the folder , deletes first if exisits
      *
-     * @param string $folder
+     * @param  string  $folder
      */
     public function initAndClearFolder($folder, $force = true)
     {
         $shouldCreate = true;
         
         if ($this->files->isDirectory($folder) == true) {
-            
-            if($force) {    
+            if ($force) {
                 $this->files->deleteDirectory($folder);
-            }
-            else 
-            {
+            } else {
                 $shouldCreate = false;
             }
         }
         
-        if($shouldCreate == true) {
+        if ($shouldCreate == true) {
             $this->files->makeDirectory($folder, 0755, true);
         }
     }
@@ -325,7 +323,7 @@ class MakeClient extends Command
     /**
      * Get the name of the migration.
      *
-     * @param  string $path
+     * @param  string  $path
      * @return string
      */
     public function getMigrationName($path)
@@ -337,24 +335,18 @@ class MakeClient extends Command
     /**
      * Get all of the migration files in a given path.
      *
-     * @param  string|array $paths
+     * @param  string|array  $paths
      * @return array
      */
     public function getMigrationFiles($paths)
     {
-        return Collection::make($paths)->flatMap(
-            function ($path) {
-                return $this->files->glob($path.'/*_*.php');
-            }
-        )->filter()->sortBy(
-            function ($file) {
-                    return $this->getMigrationName($file);
-            }
-        )->values()->keyBy(
-            function ($file) {
-                    return $this->getMigrationName($file);
-            }
-        )->all();
+        return Collection::make($paths)->flatMap(function ($path) {
+            return $this->files->glob($path.'/*_*.php');
+        })->filter()->sortBy(function ($file) {
+            return $this->getMigrationName($file);
+        })->values()->keyBy(function ($file) {
+            return $this->getMigrationName($file);
+        })->all();
     }
     
     public static function getProtectedValue($obj, $name)

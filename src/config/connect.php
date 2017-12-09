@@ -5,6 +5,10 @@ return [
     'model_classes_folder' => app_path("Models"),
 
     'api' => [
+        'key' => [
+            'header' => 'x-connect-api-key',
+            'value' => ''
+        ],
         'prefix' => 'square1/connect',
         'auth' => [
              'model' => 'User'
