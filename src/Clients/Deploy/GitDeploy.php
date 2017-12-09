@@ -77,9 +77,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
             }
         });
 
-        if($process->isSuccessful()){
-           
-        } else {
+        if(!$process->isSuccessful()){
             throw new ProcessFailedException($process);
         }
          
