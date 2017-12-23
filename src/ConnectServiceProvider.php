@@ -42,11 +42,14 @@ class ConnectServiceProvider extends ServiceProvider
         }
         
         Response::macro(
-            'connect', function ($value, $status = 200) {
+            'connect',
+        
+            function ($value, $status = 200) {
                 return Response::json(
                     [
                     'data' => $value,
-                    ], $status
+                    ],
+                    $status
                 );
             }
         );
@@ -81,7 +84,8 @@ class ConnectServiceProvider extends ServiceProvider
             'namespace' => 'Square1\Laravel\Connect\App\Http\Controllers',
             'prefix' => config('connect.api.prefix'),
              'as' => 'connect.'
-            ], function ($router) use ($path) {
+            ],
+            function ($router) use ($path) {
                 include $path;
             }
         );

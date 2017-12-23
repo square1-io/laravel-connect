@@ -11,11 +11,10 @@ use Illuminate\Support\Str;
 
 class Criteria
 {
-   
     const CONTAINS = "contains";
     const EQUAL = "equal";
     const NOTEQUAL = "notequal";
-    const GREATERTHAN = "greaterthan"; 
+    const GREATERTHAN = "greaterthan";
     const LOWERTHAN = "lowerthan";
     const GREATERTHANOREQUAL = "greaterthanorequal";
     const LOWERTHANOREQUAL = "lowerthanorequal";
@@ -32,26 +31,22 @@ class Criteria
     private $verb;
     
 
-    public function __construct($name, $value, $verb) 
+    public function __construct($name, $value, $verb)
     {
-        
         $this->name = $name;
         
         $exploded = explode('.', $name);
         
-        if(count($exploded) == 2) {
-            $this->relation = $exploded[0]; 
+        if (count($exploded) == 2) {
+            $this->relation = $exploded[0];
             $this->param = $exploded[1];
-        }
-        else
-        {
+        } else {
             $this->relation = '';
             $this->param = $exploded[0];
         }
 
         $this->value = $value;
         $this->verb = Str::lower($verb);
-        
     }
     
     public function onRelation()
@@ -77,16 +72,13 @@ class Criteria
     public function value()
     {
         return $this->value;
-    }    
+    }
     
     public function apply($query, $table = '')
     {
-        
-        if(strlen($table) > 0) {
+        if (strlen($table) > 0) {
             $name = $table.'.'.$this->param;
-             
-        }else
-         {
+        } else {
             $name = $this->param;
         }
        
@@ -108,6 +100,4 @@ class Criteria
 
         return $query;
     }
-    
-    
 }

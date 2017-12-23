@@ -166,7 +166,7 @@ class RequestParamTypeResolver
         // First we will get the correct keys for the given attribute in case the field is nested in
         // an array. Then we determine if the given rule accepts other field names as parameters.
         // If so, we will replace any asterisks found in the parameters with the correct keys.
-        if (($keys = $this->getExplicitKeys($attribute)) 
+        if (($keys = $this->getExplicitKeys($attribute))
             && $this->dependsOnOtherFields($rule)
         ) {
             $parameters = $this->replaceAsterisksInParameters($parameters, $keys);
@@ -272,7 +272,8 @@ class RequestParamTypeResolver
         return array_map(
             function ($field) use ($keys) {
                 return vsprintf(str_replace('*', '%s', $field), $keys);
-            }, $parameters
+            },
+            $parameters
         );
     }
 
@@ -665,7 +666,8 @@ class RequestParamTypeResolver
     protected function getPresenceVerifierFor($connection)
     {
         return tap(
-            $this->getPresenceVerifier(), function ($verifier) use ($connection) {
+            $this->getPresenceVerifier(),
+            function ($verifier) use ($connection) {
                 $verifier->setConnection($connection);
             }
         );

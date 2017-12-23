@@ -23,10 +23,10 @@ interface ConnectRepository
     public function indexRelation($parentId, $relationName, $with, $perPage, $filter, $sort_by);
     
 
-     /*
-      * returns the model instance give the id
+    /*
+     * returns the model instance give the id
 
-      */
+     */
     public function show($id, $with);
 
      
@@ -94,10 +94,9 @@ interface ConnectRepository
     public function pagination($page = 0, $limit = 5);
 
 
-     /*
-     *  process uploaded files and based on the Model
-     *  returs an appropriate form of the file
-     */
+    /*
+    *  process uploaded files and based on the Model
+    *  returs an appropriate form of the file
+    */
     public function storeUploadedFile($file);
-    
 }

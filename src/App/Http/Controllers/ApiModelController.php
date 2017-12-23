@@ -135,7 +135,17 @@ class ApiModelController extends ConnectBaseController
             $relId = $request->route()->parameter('relId');
             $relationName = $request->route()->parameter('relation');
 
-            $data = $this->repository->showRelation($parentId, $relationName, $relId);
+            $params = $request->all();
+            
+            $with = array_get($params, 'include', '');
+            
+            if (!empty($with)) {
+                $with = explode(',', $with);
+            } else {
+                $with = [];
+            }
+
+            $data = $this->repository->showRelation($parentId, $relationName, $relId, $with);
 
             return response()->connect($data);
         });

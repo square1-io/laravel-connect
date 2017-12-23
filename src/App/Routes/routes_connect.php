@@ -1,7 +1,8 @@
 <?php
 
 Route::group(
-    [], function () {
+    [],
+    function () {
         Route::get('/{model}', [ 'uses' => 'ApiModelController@index', 'as' => 'index']);
         Route::post('/{model}', [ 'uses' =>  'ApiModelController@create', 'as' => 'create']);
         Route::get('/{model}/{id}', [ 'uses' =>  'ApiModelController@show', 'as' => 'show'])->where('id', '[0-9]+');
@@ -15,7 +16,8 @@ Route::group(
         Route::delete('/{model}/{id}/{relation}/{relationId}', [ 'uses' =>  'ApiModelController@deleteRelation', 'as' => 'delete_relation'])->where(['id' => '[0-9]+','relId' => '[0-9]+']);
 
         Route::group(
-            ['prefix' => 'auth', 'as' => 'auth.'], function () {
+            ['prefix' => 'auth', 'as' => 'auth.'],
+            function () {
                 Route::get('/current', [ 'uses' => 'AuthController@show', 'as' => 'current']);
                 Route::post('/login', [ 'uses' => 'AuthController@login', 'as' => 'login']);
                 Route::post('/reset-password', [ 'uses' => 'AuthController@login', 'as' => 'reset-password']);

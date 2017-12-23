@@ -35,18 +35,18 @@ class ModelInspector
 
     private $endpointReference;
 
-     /**
-      * The filesystem instance.
-      *
-      * @var \Illuminate\Filesystem\Filesystem
-      */
+    /**
+     * The filesystem instance.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
     protected $files;
 
-     /**
-      * Create a new  instance.
-      *
-      * @return void
-      */
+    /**
+     * Create a new  instance.
+     *
+     * @return void
+     */
     public function __construct($className, Filesystem $files, MakeClient $client)
     {
         $this->files = $files;
@@ -162,7 +162,7 @@ class ModelInspector
                 $relatesToMany = $result->relatesToMany();
                 $result = $result->toArray();
                     
-                     //is this relation via a separate table ?
+                //is this relation via a separate table ?
                 if ($relatesToMany && isset($result['table'])) {
                     $tableAttributes = $this->client->tableMap[$result['table']]["attributes"];
                     $result['table_attributes'] = $tableAttributes;
@@ -175,14 +175,14 @@ class ModelInspector
         }
     }
 
-        /**
-         * There are a number of methods that we don't have any interests on
-         * we want to remove any method that is not potentially defining a relationship
-         * or a dinamic attribute.
-         *
-         * @param array $out
-         * @param array $dynamicAttributes
-         */
+    /**
+     * There are a number of methods that we don't have any interests on
+     * we want to remove any method that is not potentially defining a relationship
+     * or a dinamic attribute.
+     *
+     * @param array $out
+     * @param array $dynamicAttributes
+     */
     private function purgedUselessMethods(array& $out, array& $dynamicAttributes)
     {
         $this->client->info('removing unnecesary methods ...', 'vvv');
@@ -201,9 +201,11 @@ class ModelInspector
                 array_combine(
                     array_map(
                         function ($o) {
-                                return $o->name;
-                        }, $traitMethods
-                    ), $traitMethods
+                            return $o->name;
+                        },
+                        $traitMethods
+                    ),
+                    $traitMethods
                 )
             );
         }
@@ -215,12 +217,12 @@ class ModelInspector
             };
             
             //esclude constructors and methods that take one or more parameters
-            if (strpos($method->name, '_construct') === false 
-                && empty($method->getParameters()) 
+            if (strpos($method->name, '_construct') === false
+                && empty($method->getParameters())
                 && $method->class == $this->modelInfo->getName()
             ) {//not inherited
                 
-                if (Str::startsWith($method->name, "get") 
+                if (Str::startsWith($method->name, "get")
                     && Str::endsWith($method->name, "Attribute")
                 ) {
                     $dynamicAttributes[$method->name] = $method;

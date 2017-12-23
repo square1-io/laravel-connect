@@ -6,8 +6,7 @@ use Laravel\Passport\TokenRepository;
 
 class ConnectUtils
 {
-    
-    static public function repositoryInstanceForModelPath($modelReference)
+    public static function repositoryInstanceForModelPath($modelReference)
     {
         $repositoryClass = config("connect_auto_generated.endpoints.".$modelReference);
        
@@ -19,7 +18,7 @@ class ConnectUtils
     }
     
     
-    static public function getUserForTokenString($tokenString)
+    public static function getUserForTokenString($tokenString)
     {
         $jwtParser = new \Lcobucci\JWT\Parser();
         $jwtToken = $jwtParser->parse($tokenString);
@@ -42,20 +41,20 @@ class ConnectUtils
         }
     }
     
-        /**
-         * Parse token from the authorization header.
-         *
-         * @param string $header
-         * @param string $method
-         *
-         * @return false|string
-         */
+    /**
+     * Parse token from the authorization header.
+     *
+     * @param string $header
+     * @param string $method
+     *
+     * @return false|string
+     */
     private static function parseAuthHeader($request, $header = 'authorization', $method = 'bearer')
     {
         $header = $request->headers->all();
         $header = $header['authorization'];
         
-        if(is_array($header)) {
+        if (is_array($header)) {
             $header = $header[0];
         }
         
@@ -76,5 +75,4 @@ class ConnectUtils
         
         return $currentUser;
     }
-    
 }

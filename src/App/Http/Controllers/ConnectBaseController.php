@@ -2,16 +2,13 @@
 
 namespace Square1\Laravel\Connect\App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 
-
 class ConnectBaseController extends Controller
 {
-    
     private $request;
             
     public function __construct(Request $request)
@@ -30,7 +27,7 @@ class ConnectBaseController extends Controller
         try {
             return $closure();
         } catch (\Exception $e) {
-             $this->exceptionHandler()->report($e);
+            $this->exceptionHandler()->report($e);
             $payload = [
                 'message' => $e->getMessage(),
             ];
@@ -48,5 +45,4 @@ class ConnectBaseController extends Controller
     {
         return Container::getInstance()->make(ExceptionHandler::class);
     }
-    
 }

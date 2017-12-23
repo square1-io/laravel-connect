@@ -5,7 +5,7 @@
  * @author roberto
  */
 
-namespace Square1\Laravel\Connect\App\Filters; 
+namespace Square1\Laravel\Connect\App\Filters;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Square1\Laravel\Connect\App\Filters\Criteria;
@@ -13,30 +13,26 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Filter implements Arrayable
 {
-   
     private $criteria;
     private $relationCriteria;
     
  
-    public function __construct() 
+    public function __construct()
     {
-       
         $this->criteria = [];
-        $this->relationCriteria = [];        
+        $this->relationCriteria = [];
     }
     
 
     public function addCriteria(Criteria $criteria)
     {
-        if($criteria->onRelation() == true) {
-            if(!isset($this->relationCriteria[$criteria->relation()])) {
+        if ($criteria->onRelation() == true) {
+            if (!isset($this->relationCriteria[$criteria->relation()])) {
                 $this->relationCriteria[$criteria->relation()] = [];
             }
             
-             $this->relationCriteria[$criteria->relation()][] = $criteria;
-        }
-        else
-        {
+            $this->relationCriteria[$criteria->relation()][] = $criteria;
+        } else {
             $this->criteria[] = $criteria;
         }
     }
@@ -44,73 +40,69 @@ class Filter implements Arrayable
     public function apply($query, $model)
     {
         $table = $model->getTable();
-        foreach ($this->criteria as $criteria)
-        {
+        foreach ($this->criteria as $criteria) {
             $query = $criteria->apply($query, $table);
         }
         
         //now loop over the relations
         
-        foreach ($this->relationCriteria as $relation => $criteria)
-        {
+        foreach ($this->relationCriteria as $relation => $criteria) {
             //is this a legitimate relation ?
             $relatedModelTable = $this->getRelationTable($model, $relation);
             
-            if(!$relatedModelTable) {
+            if (!$relatedModelTable) {
                 continue;// ingnore this is not a relation on the model.
             }
-            // we found a relation on this model 
+            // we found a relation on this model
             $query->whereHas(
-                $relation, function ($q) use ($criteria, $relatedModelTable) {  
-                    //add all the criterias for this relation 
-                    foreach ($criteria as $c)
-                    {
-                         $c->apply($q, $relatedModelTable);
-                    }  
+                $relation,
+ 
+                function ($q) use ($criteria, $relatedModelTable) {
+                    //add all the criterias for this relation
+                    foreach ($criteria as $c) {
+                        $c->apply($q, $relatedModelTable);
+                    }
                 }
             );
-        }        
+        }
         
         return $query;
     }
     
     
     /**
-     * To prevent calling any random method on the model 
-     * this method ensure that filters are applied only to the model 
+     * To prevent calling any random method on the model
+     * this method ensure that filters are applied only to the model
      * or to actual relations.
-     * 
+     *
      * @param  Filter $filter
      * @return boolean
      */
     private function getRelationTable($model, $relation)
     {
-
-        if (!method_exists($model, $relation)) { 
+        if (!method_exists($model, $relation)) {
             return false;
         }
 
         $relation = $model->$relation();
 
-        if($relation instanceof Relation) {
-                return $relation->getRelated()->getTable();
+        if ($relation instanceof Relation) {
+            return $relation->getRelated()->getTable();
         }
 
         return false;
     }
     
-    public function toArray() 
+    public function toArray()
     {
-          
         $result = [];
 
-        foreach ($this->criteria as $criteria)
-        {
-            if(!isset($result[$criteria->name()])) {
+        foreach ($this->criteria as $criteria) {
+            if (!isset($result[$criteria->name()])) {
                 $result[$criteria->name()] = [];
             }
             
-            if(!isset($result[$criteria->name()][$criteria->verb()])) {
+            if (!isset($result[$criteria->name()][$criteria->verb()])) {
                 $result[$criteria->name()][$criteria->verb()] = [];
             }
             
@@ -119,5 +111,4 @@ class Filter implements Arrayable
           
         return $result;
     }
-    
 }

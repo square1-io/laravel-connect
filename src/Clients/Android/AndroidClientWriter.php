@@ -22,16 +22,16 @@ class AndroidClientWriter extends ClientWriter
 
         $package = config("connect.clients.android.package");
         
-         //prepare Android folder
+        //prepare Android folder
         $this->client()->initAndClearFolder($this->client()->baseBuildPath . '/android/');
         $path = $this->buildJavaPackageFolder($package);
 
         //now that patsh are set prepare git for deploy
         // pull previous version
         $git = new GitDeploy(
-            env('ANDROID_GIT_REPO'), 
+            env('ANDROID_GIT_REPO'),
             $this->client()->baseBuildPath . '/android/',
-            env('ANDROID_GIT_BRANCH') 
+            env('ANDROID_GIT_BRANCH')
         );
         
         $git->setDisabled(env('ANDROID_GIT_DISABLED'));
@@ -66,7 +66,7 @@ class AndroidClientWriter extends ClientWriter
         $manifestFile = str_replace('{{PACKAGE}}', $package, $manifestFile);
         $this->client()->files->put($this->client()->baseBuildPath . '/android/src/main/AndroidManifest.xml', $manifestFile);
         
-        // deliver to the mobile developer 
+        // deliver to the mobile developer
         $git->push();
     }
 
@@ -249,16 +249,16 @@ class AndroidClientWriter extends ClientWriter
 
     public function resolveToJavaType($type)
     {
-        if ($type == 'text' 
-            || $type == 'char' 
-            || $type == 'string' 
+        if ($type == 'text'
+            || $type == 'char'
+            || $type == 'string'
             || $type == 'enum'
         ) {
             return 'String';
         }
 
-        if ($type == 'timestamp' 
-            || $type == 'date' 
+        if ($type == 'timestamp'
+            || $type == 'date'
             || $type == 'dateTime'
         ) {
             return 'Date';
@@ -289,7 +289,6 @@ class AndroidClientWriter extends ClientWriter
 
     private function buildJavaPackageFolder($package)
     {
-        
         $path = $this->client()->baseBuildPath . '/android/src/main/java/' . str_replace('.', '/', $package);
 
         $this->client()->initAndClearFolder($path);

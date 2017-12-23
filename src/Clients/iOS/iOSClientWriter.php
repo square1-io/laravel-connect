@@ -26,12 +26,12 @@ class iOSClientWriter extends ClientWriter
         //now that patsh are set prepare git for deploy
         // pull previous version
         $git = new GitDeploy(
-            env('IOS_GIT_REPO'), 
+            env('IOS_GIT_REPO'),
             $this->client()->baseBuildPath . '/iOS/',
-            env('IOS_GIT_BRANCH') 
+            env('IOS_GIT_BRANCH')
         );
         
-        $git->setDisabled(env('IOS_GIT_DISABLED', false));        
+        $git->setDisabled(env('IOS_GIT_DISABLED', false));
         $git->init();
         
         $tableMap  = array_merge(array(), $this->client()->tableMap);
@@ -47,7 +47,6 @@ class iOSClientWriter extends ClientWriter
         
         
         foreach ($this->client()->classMap as $classMap) {
-
             $routes = isset($classMap["routes"]) ? $classMap["routes"] : [];
             $inspector = $classMap['inspector'];
             $className = $inspector->classShortName();
@@ -60,7 +59,8 @@ class iOSClientWriter extends ClientWriter
                 array_merge(
                     $inspector->getDynamicAttributes(),
                     $tableMap[$inspector->tableName()]['attributes']
-                ), $className
+                ),
+                $className
             );
   
             $members_test[$className] = $members;
@@ -76,22 +76,21 @@ class iOSClientWriter extends ClientWriter
             //setting attributes to the entity
             // <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
             foreach ($members as $member) {
-                
                 $newElement = $xml->createElement("attribute");
                 $userInfo =  $xml->createElement("userInfo");
               
                 if ($member['primaryKey']) {
-                        // ="0" ="YES" syncable="YES"/>
+                    // ="0" ="YES" syncable="YES"/>
                     $el = $xml->createElement("entry");
                     $el->setAttribute("key", "laravel.model.primaryKey");
-                    $el->setAttribute("value",  "YES");
-                    $userInfo->appendChild($el);  
+                    $el->setAttribute("value", "YES");
+                    $userInfo->appendChild($el);
                 }
 
-                    $el = $xml->createElement("entry");
-                    $el->setAttribute("key", "laravel.json.key");
-                    $el->setAttribute("value", $member['json_key']);
-                    $userInfo->appendChild($el);
+                $el = $xml->createElement("entry");
+                $el->setAttribute("key", "laravel.json.key");
+                $el->setAttribute("value", $member['json_key']);
+                $userInfo->appendChild($el);
 
                 $newElement->appendChild($userInfo);
                 
@@ -105,10 +104,9 @@ class iOSClientWriter extends ClientWriter
             }
             
             //seeting relationships to the entity
-            $relations = $this->buildCoreDataRelations($inspector->relations());   
+            $relations = $this->buildCoreDataRelations($inspector->relations());
 
-            foreach($relations as $relation){
-
+            foreach ($relations as $relation) {
                 $newElement = $xml->createElement("relationship");
                 $newElement->setAttribute("name", $relation['varName']);
                 $newElement->setAttribute("destinationEntity", $relation['relatedClass']);
@@ -119,7 +117,6 @@ class iOSClientWriter extends ClientWriter
 
                 if ($relation['many']) {
                     $newElement->setAttribute("toMany", "YES");
-                 
                 } else {
                     $newElement->setAttribute("maxCount", "1");
                     $el = $xml->createElement("entry");
@@ -134,7 +131,6 @@ class iOSClientWriter extends ClientWriter
                 $userInfo->appendChild($el);
 
                 $coredata_entity->appendChild($newElement);
-                
             }
 
             $xmlModel->appendChild($coredata_entity);
@@ -163,7 +159,7 @@ class iOSClientWriter extends ClientWriter
         $this->buildXCDatamodeld($xml);
         $this->client()->dumpObject('members_test', $members_test);
         
-           // deliver to the mobile developer 
+        // deliver to the mobile developer
         $git->push();
     }
 
@@ -230,13 +226,11 @@ class iOSClientWriter extends ClientWriter
     //@[@"type", @"description", @"signed"];
     public function getSwiftVariableName($attributeName, $className)
     {
-       
         $prefix = config("connect.clients.ios.prefix");
-        if(empty($prefix)) {
-
-            if("description" === $attributeName  
-                || "type" === $attributeName   
-                || "signed" === $attributeName 
+        if (empty($prefix)) {
+            if ("description" === $attributeName
+                || "type" === $attributeName
+                || "signed" === $attributeName
             ) {
                 $attributeName = $className."_".$attributeName;
             }
@@ -368,9 +362,9 @@ class iOSClientWriter extends ClientWriter
             $type = $type->type;
         }
         
-        if ($type == 'text' 
-            || $type == 'char' 
-            || $type == 'string' 
+        if ($type == 'text'
+            || $type == 'char'
+            || $type == 'string'
             || $type == 'enum'
         ) {
             return 'String';
@@ -405,16 +399,16 @@ class iOSClientWriter extends ClientWriter
 
     public function resolveToSwiftType($type)
     {
-        if ($type == 'text' 
-            || $type == 'char' 
-            || $type == 'string' 
+        if ($type == 'text'
+            || $type == 'char'
+            || $type == 'string'
             || $type == 'enum'
         ) {
             return 'String';
         }
 
-        if ($type == 'timestamp' 
-            || $type == 'date' 
+        if ($type == 'timestamp'
+            || $type == 'date'
             || $type == 'dateTime'
         ) {
             return 'NSDate';
@@ -448,7 +442,6 @@ class iOSClientWriter extends ClientWriter
         $results = [];
         
         foreach ($relations as $relationName => $relation) {
-
             $relatedClass = $this->client()->classMap[$relation['related']]['inspector']->classShortName();
             $varName = $relationName;
             $name = $relationName;

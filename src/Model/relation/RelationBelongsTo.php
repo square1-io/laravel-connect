@@ -33,15 +33,15 @@ class RelationBelongsTo extends Relation
 
    
     
-        /**
-         * Create a new belongs to relationship instance.
-         *
-         * @param  \Illuminate\Database\Eloquent\Builder $query
-         * @param  \Illuminate\Database\Eloquent\Model   $child
-         * @param  string                                $foreignKey
-         * @param  string                                $ownerKey
-         * @return void
-         */
+    /**
+     * Create a new belongs to relationship instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Database\Eloquent\Model   $child
+     * @param  string                                $foreignKey
+     * @param  string                                $ownerKey
+     * @return void
+     */
     public function __construct($related, $child, $foreignKey, $ownerKey, $relationName)
     {
         $this->ownerKey = $ownerKey;

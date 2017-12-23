@@ -19,7 +19,8 @@ class ApiClientBlueprint extends Blueprint
      * @param  \Closure|null $callback
      * @return void
      */
-    public function __construct(MigrationInspector $inspector,
+    public function __construct(
+        MigrationInspector $inspector,
         $table,
         Closure $callback = null
     ) {

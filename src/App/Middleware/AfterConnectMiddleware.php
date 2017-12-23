@@ -16,24 +16,20 @@ class AfterConnectMiddleware
 {
     public function handle($request, Closure $next)
     {
-        //first check the apikey 
-        if(!$this->verifyApiKey($request))
-        {
+        //first check the apikey
+        if (!$this->verifyApiKey($request)) {
             //TODO RETURN BETTER ERROR
             return null;
         }
 
-        //deal with logging in a user 
-        try{
+        //deal with logging in a user
+        try {
             $currentUser = ConnectUtils::currentAuthUser($request);
        
-            if($currentUser) {
+            if ($currentUser) {
                 Auth::login($currentUser);
             }
-        }
-        catch(Exception $e)
-        {
-       
+        } catch (Exception $e) {
         }
         $response = $next($request);
         
@@ -68,7 +64,7 @@ class AfterConnectMiddleware
      * Check the api key and return true if the request can continue
      *
      * @param Request $request the incoming request
-     * 
+     *
      * @return bool true if the request has a valid key or if no key is set for this application
      */
     public function verifyApiKey($request)
@@ -76,13 +72,12 @@ class AfterConnectMiddleware
         $keys = config('connect.api.key.value');
 
         if (!empty($keys)) {
-
             $headerValue  = $request->header(config('connect.api.key.header'), '');
 
-            if(empty($headerValue)) {
+            if (empty($headerValue)) {
                 return false;
             }
-            if(is_array($keys)) {
+            if (is_array($keys)) {
                 return contains($keys, $headerValue);
             }
 

@@ -61,29 +61,24 @@ class ConnectDefaultModelRepository implements ConnectRepository
      */
     public function indexRelation($parentId, $relationName, $with, $perPage, $filter, $sort_by = [])
     {
-  
         $model = $this->model;
 
-        if (!method_exists($model, $relationName)) { 
+        $relation = static::validateRelation($model, $relationName);
+       
+        if (!$relation) {
             return [];
         }
 
-        $relation = $model->$relationName();
-       
-        //prevent calling other methods on the model
-        if ($relation instanceof Relation) {
-            $model = $model::find($parentId);
+        $model = $model::find($parentId);
    
-            $relation = $model->$relationName();
-            $relatedModel = $relation->getRelated();
-            $filter = FilterManager::buildFromArray($relatedModel, $filter);
+        $relation = $model->$relationName();
+        $relatedModel = $relation->getRelated();
+        $filter = FilterManager::buildFromArray($relatedModel, $filter);
              
-            return $relation->with($with)
+        return $relation->with($with)
                 ->filter($filter)
                 ->order($sort_by)
                 ->paginate(intval($perPage));
-        }
-        return null;
     }
     
     public function show($id, $with = [])
@@ -99,6 +94,13 @@ class ConnectDefaultModelRepository implements ConnectRepository
     public function showRelation($parentId, $relationName, $relId, $with)
     {
         $model = $this->model;
+
+        $relation = static::validateRelation($model, $relationName);
+        
+        if (!$relation) {
+            return null;
+        }
+
         $model = $model::find($parentId);
         
         return $model->$relationName()->with($with)->where('id', $relId)->get()->first();
@@ -154,6 +156,14 @@ class ConnectDefaultModelRepository implements ConnectRepository
     public function updateRelation($parentId, $relationName, $relationData)
     {
         $model = $this->model;
+
+        $relation = static::validateRelation($model, $relationName);
+        
+        if (!$relation) {
+            return null;
+        }
+        
+
         $model = $model::find($parentId);
         $relation = $model->$relationName();
         $relatedModel = $relation->getRelated();
@@ -203,6 +213,13 @@ class ConnectDefaultModelRepository implements ConnectRepository
     public function deleteRelation($parentId, $relationName, $relId)
     {
         $model = $this->model;
+
+        $relation = static::validateRelation($model, $relationName);
+        
+        if (!$relation) {
+            return null;
+        }
+
         $model = $model::find($parentId);
         $relation = $model->$relationName();
 
@@ -416,5 +433,22 @@ class ConnectDefaultModelRepository implements ConnectRepository
     public function storeUploadedFile($file)
     {
         return Storage::putFile($this->model->endpointReference(), $file);
+    }
+
+
+    public static function validateRelation($model, $relation)
+    {
+        if (!method_exists($model, $relation)) {
+            return false;
+        }
+
+        $relation = $model->$relation();
+       
+        //prevent calling other methods on the model
+        if ($relation instanceof Relation) {
+            return $relation;
+        }
+
+        return false;
     }
 }

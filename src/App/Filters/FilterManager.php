@@ -6,28 +6,26 @@
  * @author roberto
  */
 
-namespace Square1\Laravel\Connect\App\Filters; 
+namespace Square1\Laravel\Connect\App\Filters;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Square1\Laravel\Connect\App\Filters\Filter;
 use Square1\Laravel\Connect\App\Filters\Criteria;
 
-
 class FilterManager implements Arrayable
 {
-    
     private $filters;
    
     /**
      * The Laravel model on which to apply those filters
-     * 
+     *
      * @var type Model
      */
     private $model;
 
     private $request;
 
-    public function __construct($model) 
+    public function __construct($model)
     {
         $this->model = $model;
         $this->filters = [];
@@ -43,25 +41,19 @@ class FilterManager implements Arrayable
     {
         $first = true;
         
-        foreach ($this->filters as $filter)
-        {
-
-            if($first == true) {
+        foreach ($this->filters as $filter) {
+            if ($first == true) {
                 $query->where(
                     function ($q) use ($filter, $model) {
                         $filter->apply($q, $model);
-                  
                     }
                 );
-            }
-            else// apply the OR clause 
-            {
+            } else {// apply the OR clause
                 $query->orWhere(
                     function ($q) use ($filter, $model) {
                         $filter->apply($q, $model);
                     }
                 );
-                
             }
             
             $first = false;
@@ -92,11 +84,10 @@ class FilterManager implements Arrayable
         $filterManager->request = $array;
    
         
-        foreach($array as $filterData)//array containing a filter 
-        {
+        foreach ($array as $filterData) {//array containing a filter
             $filter = static::buildFilterFromArray($filterData);
             
-            if(isset($filter)) {
+            if (isset($filter)) {
                 $filterManager->addFilter($filter);
             }
         }
@@ -106,25 +97,20 @@ class FilterManager implements Arrayable
     
     public static function buildFilterFromArray($filterData)
     {
-        if(!is_array($filterData)) {
+        if (!is_array($filterData)) {
             return null;
         }
         
         $filter = new Filter();
         
-        foreach($filterData as $paramName => $criterias)
-        {
-            foreach ($criterias as $verb => $value)
-            {
-                if(is_array($value)) {
-                    foreach ($value as $v)
-                    {
+        foreach ($filterData as $paramName => $criterias) {
+            foreach ($criterias as $verb => $value) {
+                if (is_array($value)) {
+                    foreach ($value as $v) {
                         $criteria = new Criteria($paramName, $v, $verb);
-                        $filter->addCriteria($criteria); 
+                        $filter->addCriteria($criteria);
                     }
-                }
-                else
-                {
+                } else {
                     $criteria = new Criteria($paramName, $value, $verb);
                     $filter->addCriteria($criteria);
                 }
@@ -135,21 +121,16 @@ class FilterManager implements Arrayable
     }
 
     
-    public function toArray() 
+    public function toArray()
     {
-       
         $result = [];
         
-        foreach ($this->filters as $filter)
-        {
-  
+        foreach ($this->filters as $filter) {
             $result[] = $filter->toArray();
-            
         }
        
         
         
         return ['orig' => $this->request, 'parsed'=> $result ];
     }
-
 }

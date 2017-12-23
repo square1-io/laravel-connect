@@ -18,20 +18,20 @@ class RoutesInspector
 {
     private $client;
 
-     /**
-      * The filesystem instance.
-      *
-      * @var \Illuminate\Filesystem\Filesystem
-      */
+    /**
+     * The filesystem instance.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
     protected $files;
     
     public $routes;
 
-     /**
-      * Create a new  instance.
-      *
-      * @return void
-      */
+    /**
+     * Create a new  instance.
+     *
+     * @return void
+     */
     public function __construct(Filesystem $files, MakeClient $client)
     {
         $this->files = $files;
@@ -50,7 +50,7 @@ class RoutesInspector
             $this->processRoute($value);
         }
         
-         // dd(json_encode($this->routes));
+        // dd(json_encode($this->routes));
     }
     
     private function processRoute(Route $route)
@@ -132,7 +132,7 @@ class RoutesInspector
         
         $traits = $parameterClass->getTraitNames();
         
-        if (!empty($traits) 
+        if (!empty($traits)
             && in_array("Square1\Laravel\Connect\Traits\ConnectApiRequestTrait", $traits)
         ) {
             $instance =  $parameterClass->newInstanceArgs();

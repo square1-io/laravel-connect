@@ -45,11 +45,11 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
         $this->tableAttributes = $attributes;
     }
 
-      /**
-       * Get the default foreign key name for the model. but purge the Injected prefix
-       *
-       * @return string
-       */
+    /**
+     * Get the default foreign key name for the model. but purge the Injected prefix
+     *
+     * @return string
+     */
     public function getForeignKey()
     {
         return $this->model->getForeignKey();
@@ -63,14 +63,14 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     }
     
     
-        /**
-         * Get a relationship value from a method.
-         *
-         * @param  string $method
-         * @return mixed
-         *
-         * @throws \LogicException
-         */
+    /**
+     * Get a relationship value from a method.
+     *
+     * @param  string $method
+     * @return mixed
+     *
+     * @throws \LogicException
+     */
     protected function getRelationshipFromMethod($method)
     {
         return  $this->$method();
@@ -85,14 +85,14 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     ////
     //
     //
-      /**
-       * Define a one-to-one relationship.
-       *
-       * @param  string $related
-       * @param  string $foreignKey
-       * @param  string $localKey
-       * @return \Illuminate\Database\Eloquent\Relations\HasOne
-       */
+    /**
+     * Define a one-to-one relationship.
+     *
+     * @param  string $related
+     * @param  string $foreignKey
+     * @param  string $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function hasOne($related, $foreignKey = null, $localKey = null)
     {
         $relationName = $this->guessRelationName();
@@ -184,7 +184,9 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
         $name = $name ?: $this->guessRelationName();
 
         list($type, $id) = $this->getMorphs(
-            Str::snake($name), $type, $id
+            Str::snake($name),
+            $type,
+            $id
         );
 
         // If the type value is null it is probably safe to assume we're eager loading
@@ -208,7 +210,17 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
         throwException(new Exception("morphEagerTo not implemented"));
         
         return new MorphTo(
-            $this->newQuery()->setEagerLoads([]), $this->model, $id, null, $type, $name
+            $this->newQuery()->setEagerLoads([]),
+        
+            $this->model,
+        
+            $id,
+        
+            null,
+        
+            $type,
+        
+            $name
         );
     }
 
@@ -230,7 +242,12 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
         );
 
         return new MorphTo(
-            $instance->newQuery(), $this->model, $id, $instance->getKeyName(), $type, $name
+            $instance->newQuery(),
+            $this->model,
+            $id,
+            $instance->getKeyName(),
+            $type,
+            $name
         );
     }
 
@@ -427,7 +444,6 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     public function morphedByMany($related, $name, $table = null, $foreignPivotKey = null, $relatedPivotKey = null, $parentKey = null, $relatedKey = null)
     {
         throw(new Exception("morphMany not implemented"));
-
     }
 
     /**
@@ -438,7 +454,8 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     protected function guessBelongsToManyRelation()
     {
         $caller = Arr::first(
-            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), function ($trace) {
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS),
+            function ($trace) {
                 return ! in_array($trace['function'], Model::$manyMethods);
             }
         );
@@ -508,7 +525,8 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
     protected function newRelatedInstance($class)
     {
         return tap(
-            new $class, function ($instance) {
+            new $class,
+            function ($instance) {
                 if (! $instance->getConnectionName()) {
                     $instance->setConnection($this->connection);
                 }

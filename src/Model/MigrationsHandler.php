@@ -65,7 +65,7 @@ class MigrationsHandler
         foreach ($classes as $class) {
           
             //discard framework classes
-            if (is_subclass_of($class, 'Illuminate\Database\Migrations\Migration') 
+            if (is_subclass_of($class, 'Illuminate\Database\Migrations\Migration')
                 && strpos((string)$class, 'Illuminate') === false
             ) {
                 $inspector = new MigrationInspector($class, $this->files, $this->client);
@@ -134,11 +134,11 @@ class MigrationsHandler
             }
         )->filter()->sortBy(
             function ($file) {
-                    return $this->getMigrationName($file);
+                return $this->getMigrationName($file);
             }
         )->values()->keyBy(
             function ($file) {
-                    return $this->getMigrationName($file);
+                return $this->getMigrationName($file);
             }
         )->all();
     }
