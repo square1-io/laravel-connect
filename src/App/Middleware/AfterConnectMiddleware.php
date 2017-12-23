@@ -58,7 +58,7 @@ class AfterConnectMiddleware
         return $response;
     }
     
-    
+    //TODO set this as a config param
     public function isCORSEnabled()
     {
         return true;
@@ -73,8 +73,20 @@ class AfterConnectMiddleware
      */
     public function verifyApiKey($request)
     {
-        if (!empty(config('connect.api.key.value')) && $request->header(config('connect.api.key.header'), '') !== config('connect.api.key.value')) {
-            return false;
+        $keys = config('connect.api.key.value');
+
+        if (!empty($keys)) {
+
+            $headerValue  = $request->header(config('connect.api.key.header'), '');
+
+            if(empty($headerValue)) {
+                return false;
+            }
+            if(is_array($keys)) {
+                return contains($keys, $headerValue);
+            }
+
+            return $headerValue === $keys;
         }
 
         return true;
