@@ -61,9 +61,15 @@ class ConnectDefaultModelRepository implements ConnectRepository
      */
     public function indexRelation($parentId, $relationName, $with, $perPage, $filter, $sort_by = [])
     {
+  
         $model = $this->model;
+
+        if (!method_exists($model, $relationName)) { 
+            return [];
+        }
+
         $relation = $model->$relationName();
-        
+       
         //prevent calling other methods on the model
         if ($relation instanceof Relation) {
             $model = $model::find($parentId);
