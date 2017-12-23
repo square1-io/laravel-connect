@@ -85,6 +85,11 @@ class Filter implements Arrayable
      */
     private function getRelationTable($model, $relation)
     {
+
+        if (!method_exists($model, $relation)) { 
+            return false;
+        }
+
         $relation = $model->$relation();
 
         if($relation instanceof Relation) {
