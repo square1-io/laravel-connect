@@ -7,12 +7,12 @@ Route::group(
         Route::get('/{model}/{id}', [ 'uses' =>  'ApiModelController@show', 'as' => 'show'])->where('id', '[0-9]+');
         Route::post('/{model}/{id}', [ 'uses' =>  'ApiModelController@update', 'as' => 'update'])->where('id', '[0-9]+');
         Route::delete('/{model}/{id}', [ 'uses' =>  'ApiModelController@destroy', 'as' => 'destroy'])->where('id', '[0-9]+');
-        Route::get('/{model}/{id}/{relation}', [ 'uses' =>  'ApiModelController@indexRelation', 'as' => 'index_relation'])->where(['id' => '[0-9,]+', 'relation' => '[a-z]+']);
-        Route::get('/{model}/{id}/{relation}/{relId}', [ 'uses' =>  'ApiModelController@showRelation', 'as' => 'show_relation'])->where(['id' => '[0-9]+','relId' => '[0-9]+', 'relation' => '[a-z]+']);
+        Route::get('/{model}/{id}/{relation}', [ 'uses' =>  'ApiModelController@indexRelation', 'as' => 'index_relation'])->where(['id' => '[0-9,]+']);
+        Route::get('/{model}/{id}/{relation}/{relId}', [ 'uses' =>  'ApiModelController@showRelation', 'as' => 'show_relation'])->where(['id' => '[0-9]+','relId' => '[0-9]+']);
     
-        Route::post('/{model}/{id}/{relation}', [ 'uses' =>  'ApiModelController@updateRelation', 'as' => 'update_relation'])->where(['id' => '[0-9]+', 'relation' => '[a-z]+']);
+        Route::post('/{model}/{id}/{relation}', [ 'uses' =>  'ApiModelController@updateRelation', 'as' => 'update_relation'])->where(['id' => '[0-9]+']);
     
-        Route::delete('/{model}/{id}/{relation}/{relationId}', [ 'uses' =>  'ApiModelController@deleteRelation', 'as' => 'delete_relation'])->where(['id' => '[0-9]+','relId' => '[0-9]+', 'relation' => '[a-z]+']);
+        Route::delete('/{model}/{id}/{relation}/{relationId}', [ 'uses' =>  'ApiModelController@deleteRelation', 'as' => 'delete_relation'])->where(['id' => '[0-9]+','relId' => '[0-9]+']);
 
         Route::group(
             ['prefix' => 'auth', 'as' => 'auth.'], function () {
