@@ -5,7 +5,7 @@ namespace Square1\Laravel\Connect\App\Repositories;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 use Square1\Laravel\Connect\ConnectUtils;
-use Square1\Laravel\Connect\App\Filters\FilterManager;
+use Square1\Laravel\Connect\App\Filters\Filter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -32,14 +32,14 @@ class ConnectDefaultModelRepository implements ConnectRepository
      *
      * @param array $with    Eager load models
      * @param int   $perPage set the number of elemets per page
-     * @param array $filter  the array representation of a FilterManager object
+     * @param array $filter  the array representation of a Filter object
      * @param array $sort_by a list of sorting preferences
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
     public function index($with, $perPage, $filter, $sort_by)
     {
-        $filter =  FilterManager::buildFromArray($this->model, $filter);
+        $filter =  Filter::buildFromArray($this->model, $filter);
           
         return $this->model->with($with)->filter($filter)
             ->order($sort_by)
@@ -54,7 +54,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
      * @param String $relationName the name of the relationship to fetch
      * @param array  $with         Eager load models
      * @param int    $perPage      set the number of elemets per page
-     * @param array  $filter       the array representation of a FilterManager object
+     * @param array  $filter       the array representation of a Filter object
      * @param array  $sort_by      a list of sorting preferences
      *
      * @return Illuminate\Database\Eloquent\Collection
@@ -73,7 +73,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
    
         $relation = $model->$relationName();
         $relatedModel = $relation->getRelated();
-        $filter = FilterManager::buildFromArray($relatedModel, $filter);
+        $filter = Filter::buildFromArray($relatedModel, $filter);
              
         return $relation->with($with)
                 ->filter($filter)

@@ -1,6 +1,7 @@
 <?php
+
 /**
- *  Filter
+ *  FilterManager
  *
  * @author roberto
  */
@@ -9,106 +10,127 @@ namespace Square1\Laravel\Connect\App\Filters;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Square1\Laravel\Connect\App\Filters\Criteria;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Square1\Laravel\Connect\App\Filters\CriteriaCollection;
 
-class Filter implements Arrayable
+class FilterManager implements Arrayable
 {
-    private $criteria;
-    private $relationCriteria;
-    
- 
-    public function __construct()
+    private $filters;
+   
+    /**
+     * The Laravel model on which to apply those filters
+     *
+     * @var type Model
+     */
+    private $model;
+
+    private $request;
+
+    public function __construct($model)
     {
-        $this->criteria = [];
-        $this->relationCriteria = [];
+        $this->model = $model;
+        $this->filters = [];
+    }
+    
+    public function addFilter(CriteriaCollection $filter)
+    {
+        $this->filters[] = $filter;
     }
     
 
-    public function addCriteria(Criteria $criteria)
-    {
-        if ($criteria->onRelation() == true) {
-            if (!isset($this->relationCriteria[$criteria->relation()])) {
-                $this->relationCriteria[$criteria->relation()] = [];
-            }
-            
-            $this->relationCriteria[$criteria->relation()][] = $criteria;
-        } else {
-            $this->criteria[] = $criteria;
-        }
-    }
-    
     public function apply($query, $model)
     {
-        $table = $model->getTable();
-        foreach ($this->criteria as $criteria) {
-            $query = $criteria->apply($query, $table);
-        }
+        $first = true;
         
-        //now loop over the relations
-        
-        foreach ($this->relationCriteria as $relation => $criteria) {
-            //is this a legitimate relation ?
-            $relatedModelTable = $this->getRelationTable($model, $relation);
-            
-            if (!$relatedModelTable) {
-                continue;// ingnore this is not a relation on the model.
-            }
-            // we found a relation on this model
-            $query->whereHas(
-                $relation,
- 
-                function ($q) use ($criteria, $relatedModelTable) {
-                    //add all the criterias for this relation
-                    foreach ($criteria as $c) {
-                        $c->apply($q, $relatedModelTable);
+        foreach ($this->filters as $filter) {
+            if ($first == true) {
+                $query->where(
+                    function ($q) use ($filter, $model) {
+                        $filter->apply($q, $model);
                     }
-                }
-            );
+                );
+            } else {// apply the OR clause
+                $query->orWhere(
+                    function ($q) use ($filter, $model) {
+                        $filter->apply($q, $model);
+                    }
+                );
+            }
+            
+            $first = false;
         }
-        
+    
         return $query;
     }
     
     
+   
+    
     /**
-     * To prevent calling any random method on the model
-     * this method ensure that filters are applied only to the model
-     * or to actual relations.
+              "filter[0][medias.event_id][equal][0]": eventId,
+              "filter[0][medias.event_id][equal][1]": 5,
+              "filter[0][id][equal][1]": 52323,
+              "filter[1][medias.event_id][equal][0]": 666,
+              "filter[1][medias.event_id][equal][1]": 666,
+              "filter[1][id][equal][1]": 52323
      *
-     * @param  Filter $filter
-     * @return boolean
+     * @param  type $model
+     * @param  type $array
+     * @return \Square1\Laravel\Connect\App\Filters\FilterManager
      */
-    private function getRelationTable($model, $relation)
+    
+    public static function buildFromArray($model, $array = [])
     {
-        if (!method_exists($model, $relation)) {
-            return false;
+        $filterManager = new FilterManager($model);
+        $filterManager->request = $array;
+   
+        
+        foreach ($array as $filterData) {//array containing a filter
+            $filter = static::buildFilterFromArray($filterData);
+            
+            if (isset($filter)) {
+                $filterManager->addFilter($filter);
+            }
         }
-
-        $relation = $model->$relation();
-
-        if ($relation instanceof Relation) {
-            return $relation->getRelated()->getTable();
-        }
-
-        return false;
+        
+        return $filterManager;
     }
+    
+    public static function buildFilterFromArray($filterData)
+    {
+        if (!is_array($filterData)) {
+            return null;
+        }
+        
+        $filter = new CriteriaCollection();
+        
+        foreach ($filterData as $paramName => $criterias) {
+            foreach ($criterias as $verb => $value) {
+                if (is_array($value)) {
+                    foreach ($value as $v) {
+                        $criteria = new Criteria($paramName, $v, $verb);
+                        $filter->addCriteria($criteria);
+                    }
+                } else {
+                    $criteria = new Criteria($paramName, $value, $verb);
+                    $filter->addCriteria($criteria);
+                }
+            }
+        }
+        
+        return $filter;
+    }
+
     
     public function toArray()
     {
         $result = [];
-
-        foreach ($this->criteria as $criteria) {
-            if (!isset($result[$criteria->name()])) {
-                $result[$criteria->name()] = [];
-            }
-            
-            if (!isset($result[$criteria->name()][$criteria->verb()])) {
-                $result[$criteria->name()][$criteria->verb()] = [];
-            }
-            
-            $result[$criteria->name()][$criteria->verb()][] = $criteria->value();
+        
+        foreach ($this->filters as $filter) {
+            $result[] = $filter->toArray();
         }
-          
-        return $result;
+       
+        
+        
+        return ['orig' => $this->request, 'parsed'=> $result ];
     }
 }
