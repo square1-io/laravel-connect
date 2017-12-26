@@ -82,19 +82,19 @@ class Filter implements Arrayable
     
     public static function buildFromArray($model, $array = [])
     {
-        $filterManager = new Filter($model);
-        $filterManager->request = $array;
+        $filter = new Filter($model);
+        $filter->request = $array;
    
         
         foreach ($array as $filterData) {//array containing a filter
-            $filter = static::buildFilterFromArray($filterData);
+            $filterCollection = static::buildFilterFromArray($filterData);
             
-            if (isset($filter)) {
-                $filterManager->addFilter($filter);
+            if (isset($filterCollection)) {
+                $filter->addFilter($filterCollection);
             }
         }
         
-        return $filterManager;
+        return $filter;
     }
     
     public static function buildFilterFromArray($filterData)
