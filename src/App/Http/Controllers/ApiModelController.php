@@ -19,6 +19,7 @@ class ApiModelController extends ConnectBaseController
             $modelReference = $route->parameter('model');
             $this->repository = ConnectUtils::repositoryInstanceForModelPath($modelReference);
             if (empty($this->repository)) {
+                //TODO handle this  gracefully
                 abort(404);
             }
         }
@@ -32,7 +33,9 @@ class ApiModelController extends ConnectBaseController
     public function index(Request $request)
     {
         return $this->withErrorHandling(function () use ($request) {
+
             $params = $request->all();
+            
             $perPage = array_get($params, 'per_page', 15);
             $filter = array_get($params, 'filter', []);
             $sortBy = array_get($params, 'sort_by', []);
