@@ -43,10 +43,8 @@ class CriteriaCollection implements Arrayable
         $table = $model->getTable();
 
         foreach ($this->criteria as $criteria) {
-
-            if(Schema::hasColumn($table, $criteria->param())) 
-            {
-              $query = $criteria->apply($query, $table);
+            if (Schema::hasColumn($table, $criteria->param())) {
+                $query = $criteria->apply($query, $table);
             }
         }
         
@@ -84,7 +82,6 @@ class CriteriaCollection implements Arrayable
         $result = [];
 
         foreach ($this->criteria as $criteria) {
-            
             if (!isset($result[$criteria->name()])) {
                 $result[$criteria->name()] = [];
             }

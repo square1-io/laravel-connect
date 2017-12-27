@@ -78,8 +78,8 @@ trait ConnectModelTrait
     public function getRelationWithName(&$relationName)
     {
         //if ($this::class->snakeAttributes == true) {
-         $relationName = camel_case($relationName);
-       // }
+        $relationName = camel_case($relationName);
+        // }
       
         if (!method_exists($this, $relationName)) {
             return false;

@@ -2,11 +2,11 @@
 
 /**
  *  Filter
- * 
+ *
     "filter[0][medias.event_id][equal][0]": eventId,
     "filter[0][medias.event_id][equal][1]": 5,
     "filter[0][id][equal][1]": 52323,
-    
+
     "filter[1][medias.event_id][equal][0]": 666,
     "filter[1][medias.event_id][equal][1]": 666,
     "filter[1][id][equal][1]": 52323

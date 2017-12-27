@@ -33,7 +33,6 @@ class ApiModelController extends ConnectBaseController
     public function index(Request $request)
     {
         return $this->withErrorHandling(function () use ($request) {
-
             $params = $request->all();
             
             $perPage = array_get($params, 'per_page', 15);
