@@ -3,6 +3,7 @@
 namespace Square1\Laravel\Connect\Traits;
 
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait ConnectModelTrait
 {
@@ -64,5 +65,43 @@ trait ConnectModelTrait
         if (isset($filter)) {
             return $filter->apply($query, $this);
         }
+    }
+
+
+    /**
+     * Return a Relation given a name , false if the name doesn't match any defined
+     * relation
+     *
+     * @param String $relationName
+     * @return Relation or false
+     */
+    public function getRelationWithName(&$relationName)
+    {
+        //if ($this::class->snakeAttributes == true) {
+         $relationName = camel_case($relationName);
+       // }
+      
+        if (!method_exists($this, $relationName)) {
+            return false;
+        }
+
+        $relation = $this->$relationName();
+
+        if ($relation instanceof Relation) {
+            return $relation;
+        }
+
+        return false;
+    }
+
+    public function getRelationTableWithName(&$relationName)
+    {
+        $relation = $this->getRelationWithName($relationName);
+    
+        if ($relation instanceof Relation) {
+            return $relation->getRelated()->getTable();
+        }
+
+        return false;
     }
 }
