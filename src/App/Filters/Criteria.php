@@ -63,6 +63,11 @@ class Criteria
     {
         return $this->name;
     }
+
+    public function param()
+    {
+        return $this->param;
+    }
     
     public function verb()
     {
