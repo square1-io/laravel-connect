@@ -33,7 +33,7 @@ class GitDeploy
     {
         $this->runGitCommand("init ");
         $this->runGitCommand("remote add origin ".$this->repository);
-        $this->runCommand("ssh -T git@bitbucket.org");
+        //$this->runCommand("ssh -T git@bitbucket.org");
         $this->runGitCommand("fetch --tags --progress");
         $this->switchToBranch($this->branch);
     }
