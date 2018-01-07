@@ -34,7 +34,7 @@ class AndroidClientWriter extends ClientWriter
             env('ANDROID_GIT_BRANCH')
         );
         
-        $git->setDisabled(env('ANDROID_GIT_DISABLED'));
+        $git->setDisabled(env('ANDROID_GIT_DISABLED', true));
                 
         $git->init();
         
@@ -135,6 +135,11 @@ class AndroidClientWriter extends ClientWriter
         $results = [];
         
         foreach ($relations as $relationName => $relation) {
+
+            if(!isset($this->client()->classMap[$relation['related']])){
+                continue;
+            }
+
             $varName = lcfirst($relationName);
             $name = $relationName;
             $type = $relation['many'] ? "ModelManyRelation" : "ModelOneRelation";

@@ -31,7 +31,7 @@ class iOSClientWriter extends ClientWriter
             env('IOS_GIT_BRANCH')
         );
         
-        $git->setDisabled(env('IOS_GIT_DISABLED', false));
+        $git->setDisabled(env('IOS_GIT_DISABLED', true));
         $git->init();
         
         $tableMap  = array_merge(array(), $this->client()->tableMap);
@@ -238,7 +238,7 @@ class iOSClientWriter extends ClientWriter
             return lcfirst(Str::studly($attributeName));
         }
 
-        return $prefix.Str::studly($attribute->name);
+        return $prefix.Str::studly($attributeName);
     }
         
     private function buildSwiftMembers($attributes, $className)
@@ -442,6 +442,11 @@ class iOSClientWriter extends ClientWriter
         $results = [];
         
         foreach ($relations as $relationName => $relation) {
+
+            if(!isset($this->client()->classMap[$relation['related']])){
+                continue;
+            }
+
             $relatedClass = $this->client()->classMap[$relation['related']]['inspector']->classShortName();
             $varName = $relationName;
             $name = $relationName;
