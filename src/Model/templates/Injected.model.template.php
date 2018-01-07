@@ -378,15 +378,15 @@ class Injected_INJECTED_CLASS_NAME_Template extends _INJECTED_CLASS_NAME_Templat
         // instances as well as the relationship instances we need for this.
         $instance = $this->newRelatedInstance($related);
 
-        $foreignKey = $foreignKey ?: $this->getForeignKey();
+        $foreignKey = $this->getForeignKey();
 
-        $relatedKey = $relatedKey ?: $instance->getForeignKey();
+        $relatedKey = $instance->getForeignKey();
 
         // If no table name was provided, we can guess it by concatenating the two
         // models using underscores in alphabetical order. The two model names
         // are transformed to snake case from their default CamelCase also.
         if (is_null($table)) {
-            $table = $this->joiningTable($related);
+            $table = $this->model->joiningTable($related);
         }
 
         return new RelationBelongsToMany($instance, $this->model, $table, $foreignKey, $relatedKey, $relationName);
