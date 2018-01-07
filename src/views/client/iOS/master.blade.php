@@ -3,11 +3,7 @@
 @include('ios::partials.imports')
 
 @objc({{$className}})
-public class {{$className}}: NSManagedObject, Decodable {
-
-    enum CodingKeys: String, CodingKey  {
-        @each('ios::partials._codingkey', $members, 'property')
-    }
+public class {{$className}}: NSManagedObject {
 
     class var modelPath: String {       
         return "{{urlencode($classPath)}}"
@@ -15,20 +11,6 @@ public class {{$className}}: NSManagedObject, Decodable {
     
     class var primaryKey: String {       
         return "{{$primaryKey}}"
-    }
-
-    required convenience public init(from decoder: Decoder) throws {
-        // Create NSEntityDescription with NSManagedObjectContext
-        guard let contextUserInfoKey = CodingUserInfoKey.context,
-            let managedObjectContext = decoder.userInfo[contextUserInfoKey] as? NSManagedObjectContext,
-            let entity = NSEntityDescription.entity(forEntityName: "{{$className}}", in: managedObjectContext) else {
-                fatalError("Failed to decode {{$className}}!")
-        }
-        self.init(entity: entity, insertInto: nil)
-        
-        // Decode
-        {{--  //let values = try decoder.container(keyedBy: CodingKeys.self)  --}}
-        {{--  @each('ios::partials._decoding', $members, 'property')  --}}
     }
 
 }
