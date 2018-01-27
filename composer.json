@@ -2,7 +2,7 @@
     "name": "square1ltd/laravel-connect",
     "description": "Connect to a laravel backend from anywhere",
     "type": "package",
-    "license": "free",
+    "license": "MIT",
     "authors": [
         {
             "name": "Roberto Prato",
