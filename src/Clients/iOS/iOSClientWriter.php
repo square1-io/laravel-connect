@@ -72,7 +72,18 @@ class iOSClientWriter extends ClientWriter
             //$coredata_entity->setAttribute("codeGenerationType","class");
             $coredata_entity->setAttribute("representedClassName", $className);
             $coredata_entity->setAttribute("syncable", "YES");
-            
+
+            //set userInfo dictionary for the entitiy itself
+            //laravel.model.path
+            $entityUserInfo =  $xml->createElement("userInfo");
+
+            $modelPathElement = $xml->createElement("entry");
+            $modelPathElement->setAttribute("key", "laravel.model.path");
+            $modelPathElement->setAttribute("value", $classPath);
+            $entityUserInfo->appendChild($modelPathElement);
+
+            $coredata_entity->appendChild($entityUserInfo);
+
             //setting attributes to the entity
             // <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
             foreach ($members as $member) {
