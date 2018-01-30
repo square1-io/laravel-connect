@@ -6,6 +6,7 @@ use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Response;
+use Square1\Laravel\Connect\ConnectUtils;
 use Square1\Laravel\Connect\Console\MakeClient;
 use Square1\Laravel\Connect\Console\InitClient;
 use Square1\Laravel\Connect\Console\InstallClient;
@@ -47,7 +48,7 @@ class ConnectServiceProvider extends ServiceProvider
             function ($value, $status = 200) {
                 return Response::json(
                     [
-                    'data' => $value,
+                    'data' =>  ConnectUtils::formatResponseData($value),
                     ],
                     $status
                 );

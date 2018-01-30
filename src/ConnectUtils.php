@@ -3,6 +3,7 @@
 namespace Square1\Laravel\Connect;
 
 use Laravel\Passport\TokenRepository;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ConnectUtils
 {
@@ -75,4 +76,27 @@ class ConnectUtils
         
         return $currentUser;
     }
+
+    public static function formatResponseData($data){
+        
+        if($data instanceof LengthAwarePaginator) {
+
+            $data = $data->toArray();
+
+            $result = [
+                'items' => $data['data'],
+                'pagination' =>[
+                    'current_page' => $data['current_page'],
+                    'last_page' => $data['last_page'],
+                    'per_page' => $data['per_page'],
+                    'total' => $data['total']
+                ]
+            ];
+
+            return $result;
+        }
+
+        return $data;
+    }
+
 }
