@@ -3,7 +3,7 @@
 @include('ios::partials.imports')
 
 @objc({{$className}})
-public class {{$className}}: NSManagedObject {
+public class {{$className}}: ConnectModel {
 
     class var modelPath: String {       
         return "{{urlencode($classPath)}}"
