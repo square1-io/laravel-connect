@@ -109,7 +109,7 @@ class iOSClientWriter extends ClientWriter
                 $newElement->setAttribute("name", $member['varName']);
 
                 if (isset($newElement)) {
-                    $newElement->setAttribute("optional", "YES");
+                    $newElement->setAttribute("optional", $member['primaryKey'] ? "NO" : "YES");
                     $coredata_entity->appendChild($newElement);
                 }
             }
@@ -130,6 +130,7 @@ class iOSClientWriter extends ClientWriter
                     $newElement->setAttribute("toMany", "YES");
                 } else {
                     $newElement->setAttribute("maxCount", "1");
+                    $newElement->setAttribute("optional", "YES");
                     $el = $xml->createElement("entry");
                     $el->setAttribute("key", "laravel.model.foreignKey");
                     $el->setAttribute("value", $relation['key']);
