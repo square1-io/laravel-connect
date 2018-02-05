@@ -13,6 +13,15 @@ public class {{$className}}: ConnectModel {
         return "{{$primaryKey}}"
     }
 
+    {{-- declare relations to one instance --}}
+    @each('ios::partials._one_relation', $relations, 'relation') 
+
+    {{-- setup relations --}}
+    override public func setupRelations() {
+        @each('ios::partials._one_relation_init', $relations, 'relation') 
+    }
+
+
 }
 
 
