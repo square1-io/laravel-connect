@@ -82,7 +82,7 @@ class iOSClientWriter extends ClientWriter
             $modelPathElement->setAttribute("value", $classPath);
             $entityUserInfo->appendChild($modelPathElement);
 
-            $coredata_entity->appendChild($entityUserInfo);
+            
 
             //setting attributes to the entity
             // <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
@@ -96,6 +96,15 @@ class iOSClientWriter extends ClientWriter
                     $el->setAttribute("key", "laravel.model.primaryKey");
                     $el->setAttribute("value", "YES");
                     $userInfo->appendChild($el);
+
+                    //laravel.cd.primary.key
+                    //store in the main entity the name of the primary key
+                    //and then set the user info to the main entity
+                    $coreDataPrimaryKeyElement = $xml->createElement("entry");
+                    $coreDataPrimaryKeyElement->setAttribute("key", "laravel.cd.primary.key");
+                    $coreDataPrimaryKeyElement->setAttribute("value", $member['varName']);
+                    $entityUserInfo->appendChild($coreDataPrimaryKeyElement);
+                    $coredata_entity->appendChild($entityUserInfo);
                 }
 
                 $el = $xml->createElement("entry");
