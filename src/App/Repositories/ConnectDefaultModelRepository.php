@@ -74,7 +74,16 @@ class ConnectDefaultModelRepository implements ConnectRepository
         $relation = $model->$relationName();
         $relatedModel = $relation->getRelated();
         $filter = Filter::buildFromArray($relatedModel, $filter);
-             
+
+        //those 1 relations don't need to be paginated
+        if ($relation instanceof HasOne || $relation instanceof BelongsTo) {
+
+            return $relation
+                    ->with($with)
+                    ->paginate(1)
+                    ->first();
+        }
+
         return $relation->with($with)
                 ->filter($filter)
                 ->order($sort_by)
