@@ -488,7 +488,7 @@ class iOSClientWriter extends ClientWriter
             $relatedClass = $this->client()->classMap[$relation['related']]['inspector']->classShortName();
             $varName = $relationName;
             $name = $relationName;
-            $type = $relation['many'] ? "NSSet" : $relatedClass;
+            $type = $relatedClass;//$relation['many'] ? "NSSet" : $relatedClass;
             $hasSetter = false;
             //$type = $type."<$relatedClass>";
             $many = $relation['many'];
