@@ -98,7 +98,7 @@ class iOSClientWriter extends ClientWriter
             $newElement->setAttribute("defaultValueString", "NO");
             $newElement->setAttribute("usesScalarValueType", "YES");
             $newElement->setAttribute("syncable", "YES");
-            $newElement->appendChild($userInfo);
+      
             // add to main Entity
             $coredata_entity->appendChild($newElement);
 
