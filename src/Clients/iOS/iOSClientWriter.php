@@ -65,7 +65,7 @@ class iOSClientWriter extends ClientWriter
   
             $members_test[$className] = $members;
 
-            //create xml for coredata schema
+            //create xml for coredata schema, start with the Entity element
             $coredata_entity = $xml->createElement("entity");
             $coredata_entity->setAttribute("name", $className);
             // no need for this or we have conflicts
@@ -76,16 +76,33 @@ class iOSClientWriter extends ClientWriter
             //set userInfo dictionary for the entitiy itself
             //laravel.model.path
             $entityUserInfo =  $xml->createElement("userInfo");
-
             $modelPathElement = $xml->createElement("entry");
             $modelPathElement->setAttribute("key", "laravel.model.path");
             $modelPathElement->setAttribute("value", $classPath);
+            // add to main Entity
             $entityUserInfo->appendChild($modelPathElement);
 
-            
-
-            //setting attributes to the entity
+            //setting attributes to the entity, ids strings ecc ecc.
             // <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
+
+            // add a boolean flag the app uses to know if it only has the primary key for this 
+            // object or if the full json was parsed at some stage. This is useful for to-1 relations
+            // where we only have the foreign key
+            // <attribute name="hasData" optional="YES" attributeType="Boolean"
+            // defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+
+            $newElement = $xml->createElement("attribute");
+            $newElement->setAttribute("name", "hasData");
+            $newElement->setAttribute("optional", "NO");
+            $newElement->setAttribute("attributeType", "Boolean");
+            $newElement->setAttribute("defaultValueString", "NO");
+            $newElement->setAttribute("usesScalarValueType", "YES");
+            $newElement->setAttribute("syncable", "YES");
+            $newElement->appendChild($userInfo);
+            // add to main Entity
+            $coredata_entity->appendChild($newElement);
+
+
             foreach ($members as $member) {
                 $newElement = $xml->createElement("attribute");
                 $userInfo =  $xml->createElement("userInfo");
