@@ -160,7 +160,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
         $model->forceFill($params);
         $model->push();
 
-        return $model->withRelations()->get()->first();
+        return $this->show($id);
     }
     
     public function updateRelation($parentId, $relationName, $relationData)
