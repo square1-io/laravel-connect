@@ -145,7 +145,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
      * @param int   $id     The model's ID
      * @param array $params The model fields
      *
-     * @return VillagePod\Models\Model
+     * @return Models\Model
      */
     public function update($id, $params)
     {
@@ -158,7 +158,8 @@ class ConnectDefaultModelRepository implements ConnectRepository
         }
         
         $model->forceFill($params);
-        $model->touch();
+        $model->push();
+
         return $model->withRelations()->get()->first();
     }
     
@@ -330,9 +331,9 @@ class ConnectDefaultModelRepository implements ConnectRepository
     /**
      * Checks if the user is allowed to see an instance of this model.
      *
-     * @param VillagePod\Models\Model $model
+     * @param  \Models\Model $model
      *
-     * @throws VillagePod\ApiException
+     * @throws  \ApiException
      */
     protected function checkCanShow($model)
     {
@@ -356,10 +357,10 @@ class ConnectDefaultModelRepository implements ConnectRepository
     /**
      * Checks if the user is allowed to update an instance of this model.
      *
-     * @param VillagePod\Models\Model $model
+     * @param  \Models\Model $model
      * @param array                   $newValues New Values
      *
-     * @throws VillagePod\ApiException
+     * @throws  \ApiException
      */
     protected function checkCanUpdate($model, $newValues)
     {
@@ -373,7 +374,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
      *
      * @param array $params Parameters of the new model
      *
-     * @throws VillagePod\ApiException
+     * @throws  \ApiException
      */
     protected function checkCanDelete($params)
     {
@@ -385,7 +386,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
     /**
      * Determines if the user is allowed to see an instance of this model.
      *
-     * @param VillagePod\Models\Model $model
+     * @param  \Models\Model $model
      *
      * @return bool whether the user is allowed or not
      */
@@ -409,7 +410,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
     /**
      * Determines if the user is allowed to update an instance of this model.
      *
-     * @param VillagePod\Models\Model $model
+     * @param  \Models\Model $model
      * @param array                   $newValues New Values
      *
      * @return bool whether the user is allowed or not

@@ -37,7 +37,7 @@ interface ConnectRepository
      *
      * @param array $params The model fields
      *
-     * @return VillagePod\Models\Model
+     * @return Models\Model
      */
     public function create($params);
 
@@ -67,14 +67,14 @@ interface ConnectRepository
      *
      * @param int $id The model's ID
      *
-     * @return VillagePod\Models\Model
+     * @return Models\Model
      */
     public function restore($id);
 
     /**
      * Get a new instance of model.
      *
-     * @return VillagePod\Models\Model
+     * @return Models\Model
      */
     public function getNewModel();
 
