@@ -139,12 +139,17 @@ class ConnectDefaultModelRepository implements ConnectRepository
     }
 
     /**
-     * Updates a model.
-     *
+     * Updates a model. The received params are a key value dictionary containing 3 types of values.
+     * 1) Assignable parameters, stanrdard parameters like String or Integer that can be set directly
+     * 2) UploadedFile, those are first stored calling the storeUploadedFile and then a String pointer is saved in the model
+     * 3) a "relations" key value array, containing a map of the relationships to be updated. This is keyed with the name of the relationship
+     *  and an array named add with the list of models to add and remove with a list of models to remove.
+     *  relations[relation1][add]= [id1, id2, id3], relations[relation1][remove]= [id4, id5, id6]
+     * 
      * @param int   $id     The model's ID
-     * @param array $params The model fields
+     * @param array $params The model fields a key value array of parameters to be updated
      *
-     * @return Models\Model
+     * @return Models\Model the updated model
      */
     public function update($id, $params)
     {
@@ -155,11 +160,27 @@ class ConnectDefaultModelRepository implements ConnectRepository
                 $params[$param] = $this->storeUploadedFile($value);
             }
         }
-        
+
+        $relations = array_get($params, "relations", []);
+
+        $updatedRelations = [];
+
+        foreach($relations as $relation => $data) {
+            $relationAdd = array_get($data, "add", []);
+            $relationRemove = array_get($data, "remove", []);
+
+            if (ConnectUtils::updateRelationOnModel($model, $relation, $relationAdd, $relationRemove) == true) {
+                $updatedRelations[] = $relation;
+            }
+        }
+
+        //remove relations values before assigning to model as those are not part of the fillable values
+        unset ($params["relations"]);
+
         $model->forceFill($params);
         $model->push();
 
-        return $this->show($id);
+        return $this->show($id, $updatedRelations);
     }
     
     public function updateRelation($parentId, $relationName, $relationData)
