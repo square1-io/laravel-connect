@@ -124,7 +124,9 @@ class ConnectUtils
      */
     public static function validateRelation($model, $relation)
     {
+                    
         if (!method_exists($model, $relation)) {
+            
             return false;
         }
 
@@ -150,12 +152,13 @@ class ConnectUtils
     public static function updateRelationOnModel($model, $relationName, $add, $remove ){
 
         $relation = ConnectUtils::validateRelation($model, $relationName);
-       
+   
         $anyChanges = FALSE;
 
         if(!$relation){
-            return;
+            return  $anyChanges;
         }
+
 
         //TODO work on morph relations
 
@@ -189,7 +192,7 @@ class ConnectUtils
              $relation->associate($modelsToAdd[0]);
          }
          elseif ($relation instanceof BelongsToMany) {
-             $relation->attach($modelsToAdd);
+             $relation->saveMany($modelsToAdd);
          } elseif ($relation instanceof HasManyThrough) {
              //nothing to do here 
          }
@@ -198,7 +201,7 @@ class ConnectUtils
 
         //we need to figure out what we need to remove
         $modelsToRemove = ConnectUtils::modelInstancesFromData($relatedModel, $remove);
-     
+      
         //is there anything to be removed from  this relation 
         if(!empty($modelsToRemove)) {
             
@@ -222,7 +225,8 @@ class ConnectUtils
              $relation->associate($modelsToRemove);
          }
          elseif ($relation instanceof BelongsToMany) {
-             $relation->attach($modelsToRemove);
+             $ids = array_map(function($o) { return $o->getKey(); }, $modelsToRemove);
+             $relation->detach($ids);
          } elseif ($relation instanceof HasManyThrough) {
              //nothing to do here 
          }

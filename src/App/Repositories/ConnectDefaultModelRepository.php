@@ -162,7 +162,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
         }
 
         $relations = array_get($params, "relations", []);
-
+       
         $updatedRelations = [];
 
         foreach($relations as $relation => $data) {
