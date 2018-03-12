@@ -171,6 +171,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
 
             if (ConnectUtils::updateRelationOnModel($model, $relation, $relationAdd, $relationRemove) == true) {
                 $updatedRelations[] = $relation;
+               
             }
         }
 

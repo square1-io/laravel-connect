@@ -167,7 +167,7 @@ class ConnectUtils
 
         //first we need to figure out what we have received in $add
         $modelsToAdd = ConnectUtils::modelInstancesFromData($relatedModel, $add);
-
+       
         //is there anything to be added to this relation 
         if(!empty($modelsToAdd)) {
 
@@ -183,16 +183,17 @@ class ConnectUtils
         else  if ($relation instanceof HasOne ||
                  $relation instanceof HasOneOrMany || 
                  $relation instanceof HasMany) { // HasOne is a subclass of use HasOneOrMany
-                
-                
-                $relation->saveMany($modelsToAdd);
-
+            $relation->saveMany($modelsToAdd);
          } 
          elseif ($relation instanceof BelongsTo) {
              $relation->associate($modelsToAdd[0]);
          }
          elseif ($relation instanceof BelongsToMany) {
-             $relation->saveMany($modelsToAdd);
+            //using this instead of saveMany prevents multiple associations in the table
+            // and avoids any conflict with unique keys
+             $ids = array_map(function($o) { return $o->getKey(); }, $modelsToAdd);
+             $relation->syncWithoutDetaching($ids);
+             //$relation->saveMany($modelsToAdd);
          } elseif ($relation instanceof HasManyThrough) {
              //nothing to do here 
          }
@@ -225,8 +226,11 @@ class ConnectUtils
              $relation->associate($modelsToRemove);
          }
          elseif ($relation instanceof BelongsToMany) {
+             //pull out the model ids and detatch them from the relation
+
              $ids = array_map(function($o) { return $o->getKey(); }, $modelsToRemove);
              $relation->detach($ids);
+
          } elseif ($relation instanceof HasManyThrough) {
              //nothing to do here 
          }
@@ -239,8 +243,8 @@ class ConnectUtils
     /**
      * Undocumented function
      *
-     * @param [type] $modelClass
-     * @param [type] $data
+     * @param Class $modelClass extending Model 
+     * @param mixed $data
      * @return void
      */
     private static function modelInstancesFromData($modelClass, $data) {
@@ -248,7 +252,7 @@ class ConnectUtils
         $repository = ConnectUtils::repositoryInstanceForModelPath($modelClass->endpointReference());
        
         //first of all is there anything in data ? 
-        if($data  == NULL || $repository == NULL) {
+        if(empty($data) || $repository == NULL) {
             return [];
         }
 
@@ -257,7 +261,7 @@ class ConnectUtils
         }
 
         $models = [];
-
+     
         if(is_array($data)) {
             //we have an array, it is an array of primary keys or an array of arrays with values we need to create a model instance for ? 
             foreach ($data as $modelData){
@@ -277,6 +281,14 @@ class ConnectUtils
                     $models[] = $model;
                 }
             }
+           
+        }else { // data is not an array, the only other option is that we have a primaryKey
+           
+            $model = $modelClass::find($data); 
+           
+            if($model){
+                $models[] = $model;
+            } 
         }
         
         return $models;

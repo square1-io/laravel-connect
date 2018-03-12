@@ -30,6 +30,7 @@ class ConnectBaseController extends Controller
             $this->exceptionHandler()->report($e);
             $payload = [
                 'message' => $e->getMessage(),
+                'code' => $e->getCode(),
             ];
             
             return response()->connect(['error' => $payload]);
