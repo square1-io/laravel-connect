@@ -25,7 +25,7 @@ abstract class ClientWriter
 
     /**
      *
-     * @param mised $attribute, string or ModelAttribute
+     * @param mixed $attribute, string or ModelAttribute
      * @return type
      */
     abstract public function resolveType($attribute);

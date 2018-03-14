@@ -134,6 +134,14 @@ class ModelInspector
         $this->client->info('starting inspection ');
         
         foreach ($this->tableAttributes as $attribute) {
+            
+            //update the attribute type based on model specifics
+            $type = $this->model->getTypeHint($attribute->name);
+            if($type) {
+                $this->client->info("updating type of $attribute->name to $type" );
+                $attribute->type = $type;
+            }
+
             $this->model->{$attribute->name} = $attribute->dummyData();
         }
         

@@ -134,6 +134,11 @@ class iOSClientWriter extends ClientWriter
                 $newElement->setAttribute("attributeType", $member['xmlType']);
                 $newElement->setAttribute("name", $member['varName']);
 
+                ///set extra attributes
+                foreach($member['extraTypeAttributes'] as $attrName => $attrValue) {
+                    $newElement->setAttribute($attrName, $attrValue);
+                }
+
                 if (isset($newElement)) {
                     $newElement->setAttribute("optional", $member['primaryKey'] ? "NO" : "YES");
                     $coredata_entity->appendChild($newElement);
@@ -291,14 +296,15 @@ class iOSClientWriter extends ClientWriter
             $name = Str::studly($attribute->name);
             $type = $this->resolveType($attribute);
             $json_key = $attribute->name;
-            $xmlType = $this->resolveTypeForCoreDataXML($attribute);
+            $extraTypeAttributes = [];// extra values for the xml core data , for example the transformable for UploadedFiles
+            $xmlType = $this->resolveTypeForCoreDataXML($attribute, $extraTypeAttributes);
             $collection = $attribute->collection;
             $dynamic = $attribute->dynamic; //those have no setter! are from the append of the model array
             $primaryKey = $attribute->primaryKey();
 
             $references = isset($attribute->foreignKey) ? $attribute->foreignKey : null;
             if (!empty($type)) {
-                $members[] = compact('json_key', 'dynamic', 'xmlType', 'collection', 'varName', 'name', 'type', 'primaryKey', 'references');
+                $members[] = compact('json_key', 'dynamic', 'xmlType', 'extraTypeAttributes', 'collection', 'varName', 'name', 'type', 'primaryKey', 'references');
             }
         }
 
@@ -380,7 +386,7 @@ class iOSClientWriter extends ClientWriter
         return null;
     }
     
-    private function resolveTypeForCoreDataXML($type)
+    private function resolveTypeForCoreDataXML($type, &$attributes = [])
     {
         if ($type instanceof ModelAttribute) {
             if (!empty($type->on)) {
@@ -429,7 +435,8 @@ class iOSClientWriter extends ClientWriter
         }
 
         if ($type == 'image') {
-            return 'String';
+            $attributes["valueTransformerName"] = "UploadedImageCoreDataTransformer";
+            return 'Transformable';
         }
 
         return $type;
@@ -469,7 +476,7 @@ class iOSClientWriter extends ClientWriter
         }
 
         if ($type == 'image') {
-            return 'UploadedFile';
+            return 'UploadedImage';
         }
 
         return $type;

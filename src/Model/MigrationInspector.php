@@ -130,12 +130,14 @@ class MigrationInspector
             //dd($currentColumns);
             $this->client->info("found in ".$bluePrint->getTable(), 'vvv');
             
+            //we have a list of Fluent instances lets make them into attributes
+
             foreach ($currentColumns as $column) {
                 $attribute = new ModelAttribute($column);
                 
                 $attribute->fluent = $column;
                 $attribute->allowed = $column->allowed;
-                
+        
                 $this->attributeFound($bluePrint->getTable(), $attribute);
             }
         }

@@ -106,6 +106,7 @@ class ModelAttribute
             return 1;
         case 'text':
         case 'string':
+        case 'image':
             return "string";
         case 'date':
         case 'dateTime':
