@@ -78,21 +78,6 @@ interface ConnectRepository
      */
     public function getNewModel();
 
- 
-    /**
-     * Gets the model paginated.
-     *
-     * @param int $page  Page to show
-     * @param int $limit Items per page
-     *
-     * @return array Array with the result
-     *               - result: Array with the result
-     *               - total: Total of items
-     *               - page:   Current page
-     *               - pages: Total of pages
-     */
-    public function pagination($page = 0, $limit = 5);
-
 
     /*
     *  process uploaded files and based on the Model

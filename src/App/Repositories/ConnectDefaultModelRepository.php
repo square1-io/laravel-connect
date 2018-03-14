@@ -63,7 +63,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
     {
         $model = $this->model;
 
-        $relation = static::validateRelation($model, $relationName);
+        $relation = ConnectUtils::validateRelation($model, $relationName);
        
         if (!$relation) {
             return [];
@@ -104,7 +104,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
     {
         $model = $this->model;
 
-        $relation = static::validateRelation($model, $relationName);
+        $relation = ConnectUtils::validateRelation($model, $relationName);
         
         if (!$relation) {
             return null;
@@ -188,7 +188,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
     {
         $model = $this->model;
 
-        $relation = static::validateRelation($model, $relationName);
+        $relation = ConnectUtils::validateRelation($model, $relationName);
         
         if (!$relation) {
             return null;
@@ -244,7 +244,7 @@ class ConnectDefaultModelRepository implements ConnectRepository
     {
         $model = $this->model;
 
-        $relation = static::validateRelation($model, $relationName);
+        $relation = ConnectUtils::validateRelation($model, $relationName);
         
         if (!$relation) {
             return null;
@@ -330,24 +330,6 @@ class ConnectDefaultModelRepository implements ConnectRepository
 
 
     /**
-     * Gets the model paginated.
-     *
-     * @param int $page  Page to show
-     * @param int $limit Items per page
-     *
-     * @return array Array with the result
-     *               - result: Array with the result
-     *               - total: Total of items
-     *               - page:   Current page
-     *               - pages: Total of pages
-     */
-    public function pagination($page = 0, $limit = 5)
-    {
-        return $this->paginate($this->model, $page, $limit);
-    }
-
-
-    /**
      *  Store uploaded files in the defined storage.
      *  Place then in a subfolder named as the endpoint reference for the model
      *
@@ -360,20 +342,4 @@ class ConnectDefaultModelRepository implements ConnectRepository
         return Storage::putFile($this->model->endpointReference(), $file);
     }
 
-
-    public static function validateRelation($model, $relation)
-    {
-        if (!method_exists($model, $relation)) {
-            return false;
-        }
-
-        $relation = $model->$relation();
-       
-        //prevent calling other methods on the model
-        if ($relation instanceof Relation) {
-            return $relation;
-        }
-
-        return false;
-    }
 }
