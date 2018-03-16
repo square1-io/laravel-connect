@@ -414,7 +414,10 @@ class iOSClientWriter extends ClientWriter
             return 'String';
         }
 
-        if ($type == 'timestamp' || $type == 'date') {
+        if ($type == 'timestamp' 
+            || $type == 'date' 
+            || $type == 'dateTime' 
+        )  {
             return 'Date';
         }
 
