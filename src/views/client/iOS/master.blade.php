@@ -5,13 +5,6 @@
 @objc({{$className}})
 public class {{$className}}: ConnectModel {
 
-    class var modelPath: String {       
-        return "{{urlencode($classPath)}}"
-    }
-    
-    class var primaryKey: String {       
-        return "{{$primaryKey}}"
-    }
 
     {{-- declare relations to one instance --}}
     @each('ios::partials._one_relation', $relations, 'relation') 
@@ -27,9 +20,12 @@ public class {{$className}}: ConnectModel {
 
 extension {{$className}} {
 
-@each('ios::partials._property', $members, 'property') 
+    {{-- setup typealiases for enums --}}
+    @each('ios::partials._enum_type', $members, 'property') 
 
-@each('ios::partials._relation', $relations, 'relation') 
+    @each('ios::partials._property', $members, 'property') 
+
+{{-- @each('ios::partials._relation', $relations, 'relation') --}}
 
 {{-- @each('ios::partials._relation_setters', $relations, 'relation') --}}
 
@@ -38,3 +34,5 @@ extension {{$className}} {
     }
 
 }
+
+@each('ios::partials._enum_type_extend', $members, 'property') 

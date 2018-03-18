@@ -86,6 +86,8 @@ class MakeClient extends Command
     
     public $baseRepositoriesPath;
 
+    public $appVersion;
+
     /**
      * Create a new migrator instance.
      *
@@ -123,7 +125,9 @@ class MakeClient extends Command
      */
     public function handle()
     {
-        $this->info('Building the Laravel Client code');
+        $this->appVersion = $this->getAppVersion();
+
+        $this->info("Building the Laravel Client code version $this->appVersion");
        
         $settings = config("connect");
         
@@ -366,5 +370,15 @@ class MakeClient extends Command
             $array3 = $array1;
         }
         return($array3);
+    }
+
+    public function getAppVersion()
+    {
+        $commitHash = trim(exec('git log --pretty="%h" -n1 HEAD'));
+
+        $commitDate = new \DateTime(trim(exec('git log -n1 --pretty=%ci HEAD')));
+        //$commitDate->setTimezone(new \DateTimeZone('UTC'));
+
+        return sprintf('%s (%s)', $commitHash, $commitDate->format('Y-m-d H:m:s'));
     }
 }

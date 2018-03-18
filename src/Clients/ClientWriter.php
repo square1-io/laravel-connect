@@ -24,6 +24,44 @@ abstract class ClientWriter
     }
 
     /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function appVersion(){
+        return $this->client->appVersion;
+    }
+
+    public function pathComponentsAsArrayString(){
+
+        $str = config('connect.api.prefix');
+        $result = "";
+    
+        foreach (explode("/",$str) as $part ) {
+            
+            if(!empty($part)) {
+                
+                if(empty($result)){
+                    $result = "[";
+                }else {
+                    $result = $result.",";
+                }
+                
+                $result = $result."\"$part\"";
+                
+            }
+                
+        }
+        
+         if(!empty($result)){
+             $result = $result."]";
+          }
+
+        return $result;
+
+    }
+
+    /**
      *
      * @param mixed $attribute, string or ModelAttribute
      * @return type

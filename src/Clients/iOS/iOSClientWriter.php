@@ -20,7 +20,8 @@ class iOSClientWriter extends ClientWriter
     public function outputClient()
     {
         $this->info("------ RUNNING iOS CLIENT WRITER ------");
-
+        
+        $appVersion = $this->appVersion();
         $path = $this->buildSwiftFolder();
         
         //now that patsh are set prepare git for deploy
@@ -195,13 +196,19 @@ class iOSClientWriter extends ClientWriter
             unset($tableMap[$inspector->tableName()]);
 
             
-            $swift = view("ios::master", compact('classPath', 'relations', 'members', 'package', 'className', 'primaryKey', 'endpoints'))->render();
+            $swift = view("ios::master", compact('appVersion','classPath', 'relations', 'members', 'package', 'className', 'primaryKey', 'endpoints'))->render();
             $this->client()->files->put($path . "/" . $className . "+CoreDataClass.swift", $swift);
+
         }
         $xmlModel->appendChild($xmlElements);
         $this->buildXCDatamodeld($xml);
         $this->client()->dumpObject('members_test', $members_test);
         
+        //build settings 
+        $roothPath = $this->pathComponentsAsArrayString();
+        $swift = view("ios::settings_master", compact('appVersion','roothPath'))->render();
+        $this->client()->files->put($path . "/AppSettings.swift", $swift);
+
         // deliver to the mobile developer
         $git->push();
     }
@@ -291,10 +298,23 @@ class iOSClientWriter extends ClientWriter
         foreach ($attributes as $attribute) {
             $attribute = is_array($attribute) ? $attribute[0] : $attribute;
             $this->info("$attribute", 'vvv');
+
             //this save us from members that use language specific keywords as name
             $varName = $this->getSwiftVariableName($attribute->name, $className);
             $name = Str::studly($attribute->name);
+            
+            $allowedValues = [];
             $type = $this->resolveType($attribute);
+           
+            //special type enum is treated in a different way.
+            // we define a typealias String to map allowed values
+            if($type  == "enum" && !empty($attribute->allowed)) {
+                $allowedValues = $attribute->allowed;
+            }else {
+                //for some reason we have no allowed values? Go back to String
+                $type = "String";
+            }
+
             $json_key = $attribute->name;
             $extraTypeAttributes = [];// extra values for the xml core data , for example the transformable for UploadedFiles
             $xmlType = $this->resolveTypeForCoreDataXML($attribute, $extraTypeAttributes);
@@ -304,7 +324,7 @@ class iOSClientWriter extends ClientWriter
 
             $references = isset($attribute->foreignKey) ? $attribute->foreignKey : null;
             if (!empty($type)) {
-                $members[] = compact('json_key', 'dynamic', 'xmlType', 'extraTypeAttributes', 'collection', 'varName', 'name', 'type', 'primaryKey', 'references');
+                $members[] = compact('json_key', 'dynamic', 'xmlType', 'extraTypeAttributes', 'collection', 'varName', 'name', 'type','allowedValues', 'primaryKey', 'references');
             }
         }
 
@@ -351,12 +371,15 @@ class iOSClientWriter extends ClientWriter
 
     /**
      *
-     * @param mised $attribute, string or ModelAttribute
+     * @param mixed $attribute, string or ModelAttribute
      * @return type
      */
     public function resolveType($attribute)
     {
         if ($attribute instanceof ModelAttribute) {
+            //if on ins not empty this is a foreign key to another table.
+            // in this case we check if there us a model class associated with that table
+            // and we use it as the type for this
             if (!empty($attribute->on)) {
                 if (isset($this->client()->tableInspectorMap[$attribute->on])) {//$attribute->isRelation() == TRUE){
                     ///so this is a relation, lets get the 'on' value and find what class this relates to
@@ -409,7 +432,7 @@ class iOSClientWriter extends ClientWriter
         if ($type == 'text'
             || $type == 'char'
             || $type == 'string'
-            || $type == 'enum'
+             || $type == 'enum' 
         ) {
             return 'String';
         }
@@ -450,7 +473,7 @@ class iOSClientWriter extends ClientWriter
         if ($type == 'text'
             || $type == 'char'
             || $type == 'string'
-            || $type == 'enum'
+         // || $type == 'enum' //return enum to swift type and deal with allowed values
         ) {
             return 'String';
         }
