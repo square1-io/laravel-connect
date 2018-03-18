@@ -306,11 +306,15 @@ class iOSClientWriter extends ClientWriter
             $allowedValues = [];
             $type = $this->resolveType($attribute);
            
+            if(is_array($attribute->allowed)) {
+                $allowedValues = $attribute->allowed;
+                $values = implode ( "," , $allowedValues );
+                $this->info(" allowed values: $values", "vvv");
+            }
+
             //special type enum is treated in a different way.
             // we define a typealias String to map allowed values
-            if($type  == "enum" && !empty($attribute->allowed)) {
-                $allowedValues = $attribute->allowed;
-            }else {
+            if($type  == "enum" && empty($allowedValues)) {
                 //for some reason we have no allowed values? Go back to String
                 $type = "String";
             }
@@ -324,8 +328,10 @@ class iOSClientWriter extends ClientWriter
 
             $references = isset($attribute->foreignKey) ? $attribute->foreignKey : null;
             if (!empty($type)) {
-                $members[] = compact('json_key', 'dynamic', 'xmlType', 'extraTypeAttributes', 'collection', 'varName', 'name', 'type','allowedValues', 'primaryKey', 'references');
+                $members[] = compact('json_key', 'dynamic', 'xmlType', 'extraTypeAttributes', 
+                'collection', 'varName', 'name', 'type','allowedValues', 'primaryKey', 'references');
             }
+           
         }
 
         return $members;

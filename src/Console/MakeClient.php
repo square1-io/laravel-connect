@@ -28,7 +28,7 @@ class MakeClient extends Command
      *
      * @var string
      */
-    protected $signature = 'connect:build';
+    protected $signature = 'connect:build {platform?}';
 
     /**
      * The console command description.
@@ -88,6 +88,8 @@ class MakeClient extends Command
 
     public $appVersion;
 
+    public  $platform;
+
     /**
      * Create a new migrator instance.
      *
@@ -125,10 +127,20 @@ class MakeClient extends Command
      */
     public function handle()
     {
+        $this->platform = $this->argument('platform');
+        
+
         $this->appVersion = $this->getAppVersion();
 
-        $this->info("Building the Laravel Client code version $this->appVersion");
-       
+        if($this->platform != "android" && $this->platform != "iOS" ) {
+            $this->info("Building the Laravel Client code version $this->appVersion");
+            $this->info("$this->platform unknown building all...");
+            $this->platform = null;
+        }else {
+            
+            $this->info("Building the Laravel Client for $this->platform, code version $this->appVersion");
+        }
+
         $settings = config("connect");
         
         if (!isset($settings)) {
@@ -278,11 +290,15 @@ class MakeClient extends Command
 
     private function outputClient()
     {
-        $android = new AndroidClientWriter($this);
-        $android->outputClient();
+        if ($this->platform == NULL || $this->platform === "android") {
+            $android = new AndroidClientWriter($this);
+            $android->outputClient();
+        }
 
-        $ios = new iOSClientWriter($this);
-        $ios->outputClient();
+        if ($this->platform == NULL || $this->platform === "iOS") {
+            $ios = new iOSClientWriter($this);
+            $ios->outputClient();
+        }
     }
 
     //JAVA

@@ -78,7 +78,7 @@ class ModelAttribute
     
     public function __toString()
     {
-        if (!empty($this->on) && !            empty($this->references)
+        if (!empty($this->on) && !empty($this->references)
         ) {
             return "att:$this->name:ref:$this->references:on:$this->on";
         }

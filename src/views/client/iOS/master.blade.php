@@ -35,4 +35,7 @@ extension {{$className}} {
 
 }
 
-@each('ios::partials._enum_type_extend', $members, 'property') 
+@foreach($members as $property)
+@include('ios::partials._enum_type_extend', compact('property','className'))
+@endforeach
+
