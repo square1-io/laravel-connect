@@ -7,11 +7,11 @@ use ErrorException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use \Illuminate\Filesystem\Filesystem;
-use Square1\Laravel\Connect\Clients\Android\AndroidClientWriter;
-use Square1\Laravel\Connect\Clients\iOS\iOSClientWriter;
 use Square1\Laravel\Connect\Model\ModelInspector;
 use Square1\Laravel\Connect\Model\MigrationsHandler;
 use Square1\Laravel\Connect\App\Routes\RoutesInspector;
+use Square1\Laravel\Connect\Clients\iOS\iOSClientWriter;
+use Square1\Laravel\Connect\Clients\Android\AndroidClientWriter;
 
 class MakeClient extends Command
 {
@@ -86,17 +86,26 @@ class MakeClient extends Command
     
     public $baseRepositoriesPath;
 
+    /**
+     * The hash code of the last commit on the application, plus the date of the commit , 
+     * e8c4cad (2018-03-16 14:03:08), It is passed to the client generated code to ensure 
+     * consistency between client and server code
+     *
+     * @var String
+     */
     public $appVersion;
 
+    /**
+     * The target platform for this build ( android, iOS) or empty as passed when invoking the command.
+     *
+     * @var String
+     */
     public  $platform;
 
     /**
      * Create a new migrator instance.
      *
-     * @param  \Illuminate\Database\Migrations\MigrationRepositoryInterface  $repository
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
      * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @return void
      */
     public function __construct(Filesystem $files)
     {
@@ -108,12 +117,12 @@ class MakeClient extends Command
         $this->tableInspectorMap = [];
         $this->modelFolder = config('connect.model_classes_folder');
         
+        $this->appVersion = $this->getAppVersion(); 
+        $this->appName = $this->getAppName();
+
         $this->baseTmpPath = base_path('tmp');
         $this->baseBuildPath = config('connect.clients.build_path');
         $this->baseRepositoriesPath = app_path()."/Repositories/Connect";
-        
-        //$this->migrationsHandler = new MigrationsHandler($this->files, $this);
-       
         
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
@@ -128,16 +137,12 @@ class MakeClient extends Command
     public function handle()
     {
         $this->platform = $this->argument('platform');
-        
-
-        $this->appVersion = $this->getAppVersion();
 
         if($this->platform != "android" && $this->platform != "iOS" ) {
             $this->info("Building the Laravel Client code version $this->appVersion");
             $this->info("$this->platform unknown building all...");
             $this->platform = null;
-        }else {
-            
+        }else { 
             $this->info("Building the Laravel Client for $this->platform, code version $this->appVersion");
         }
 
@@ -177,11 +182,14 @@ class MakeClient extends Command
             }
         }
        
+        // just for debug purposes 
         $this->dumpObject('classMap', $this->classMap);
         $this->dumpObject('tableMap', $this->tableMap);
         
+        //rewrite the connect_auto_generated config
         $this->generateConfig();
 
+        //build and push the client code
         $this->outputClient();
     }
     
@@ -301,14 +309,13 @@ class MakeClient extends Command
         }
     }
 
-    //JAVA
-    
-
-    
-  
-
-
-    
+    /**
+     * Given a table name returns the associated model class name.
+     * The model class should use the ConnectModelTrait or null will be returned.
+     *
+     * @param String the name of a table
+     * @return String the name of a Model subclass is one is available.
+     */
     public function getModelClassFromTableName($table)
     {
         $modelInspector =  isset($this->tableInspectorMap[$table]) ? $this->tableInspectorMap[$table] : null ;
@@ -316,11 +323,12 @@ class MakeClient extends Command
         return $modelInspector ? $modelInspector->className() : null;
     }
 
-    
     /**
-     * create the folder , deletes first if exisits
+     * Creates a folder if it doesn't exists or clear an existing folder if force = true
      *
-     * @param  string  $folder
+     * @param String $folder the path to a folder to create.
+     * @param boolean $force, clear the folder if it exists already
+     * @return void
      */
     public function initAndClearFolder($folder, $force = true)
     {
@@ -395,6 +403,32 @@ class MakeClient extends Command
         $commitDate = new \DateTime(trim(exec('git log -n1 --pretty=%ci HEAD')));
         //$commitDate->setTimezone(new \DateTimeZone('UTC'));
 
-        return sprintf('%s (%s)', $commitHash, $commitDate->format('Y-m-d H:m:s'));
+        return sprintf('%s %s', $commitHash, $commitDate->format('Y-m-d H:m:s'));
     }
+
+    /**
+	 * Get the application name and namespace.
+	 *
+	 * @return string
+	 *
+	 */
+	protected function getAppName()
+	{
+        $appNameSpace = "";
+
+		$composer = json_decode(file_get_contents(base_path().'/composer.json'), true);
+		foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path)
+		{
+			foreach ((array) $path as $pathChoice)
+			{
+                if (realpath(app_path()) == realpath(base_path().'/'.$pathChoice)) {
+                    $appNameSpace = $namespace;
+                    break;
+                }
+			}
+        }
+        
+        return $appNameSpace.config('app.name');
+		
+	}
 }

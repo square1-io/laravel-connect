@@ -24,14 +24,24 @@ abstract class ClientWriter
     }
 
     /**
-     * Undocumented function
+     * get the app version
      *
-     * @return void
+     * @return String
      */
     public function appVersion(){
         return $this->client->appVersion;
     }
 
+    /**
+     * get the app name
+     *
+     * @return String
+     */
+    public function appName(){
+        return $this->client->appName;
+    }
+    
+    
     public function pathComponentsAsArrayString(){
 
         $str = config('connect.api.prefix');

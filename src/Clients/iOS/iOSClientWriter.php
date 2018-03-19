@@ -206,7 +206,8 @@ class iOSClientWriter extends ClientWriter
         
         //build settings 
         $roothPath = $this->pathComponentsAsArrayString();
-        $swift = view("ios::settings_master", compact('appVersion','roothPath'))->render();
+        $appName = $this->appName();
+        $swift = view("ios::settings_master", compact('appVersion','roothPath','appName'))->render();
         $this->client()->files->put($path . "/AppSettings.swift", $swift);
 
         // deliver to the mobile developer

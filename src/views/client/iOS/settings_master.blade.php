@@ -23,4 +23,6 @@ public extension AppSettings {
     var apiRootPathSegments: [String]  { return {!!$roothPath!!} }
 
     var serverVersion: String { return "{!!$appVersion!!}" }
+
+    var appName: String { return "{!!addslashes($appName)!!}" }
 }
