@@ -5,9 +5,12 @@ return [
     'model_classes_folder' => app_path("Models"),
 
     'api' => [
+        'cors' => [ 
+            'enabled' => true
+         ],
         'key' => [
             'header' => 'x-connect-api-key',
-            'value' => ''
+            'value' => env('CONNECT_API_KEY', '')
         ],
         'prefix' => 'square1/connect',
         'auth' => [

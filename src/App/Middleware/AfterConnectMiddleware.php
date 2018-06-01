@@ -34,8 +34,8 @@ class AfterConnectMiddleware
         $response = $next($request);
         
         //deal with crossdomain requests
-        
         if ($this->isCORSEnabled()) {
+        
             $headers = ['Access-Control-Allow-Origin' => '*'];
                   
             if ($this->isPreflightRequest($request)) {
@@ -54,10 +54,9 @@ class AfterConnectMiddleware
         return $response;
     }
     
-    //TODO set this as a config param
     public function isCORSEnabled()
     {
-        return true;
+        return config('connect.api.cors.enabled');
     }
 
     /**

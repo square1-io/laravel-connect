@@ -33,3 +33,10 @@ Double check that the migration files are using the Schema facade
 ```sh
 $ php artisan connect:init
 ```
+
+## ENV
+
+CONNECT_API_KEY: api key
+CONNECT_API_AUTH_CLIENT_ID laravel passport client id
+CONNECT_API_AUTH_GRANT_TYPE laravel passport grant type ( default is password)
+CONNECT_API_AUTH_CLIENT_SECRET laravel passport secret 

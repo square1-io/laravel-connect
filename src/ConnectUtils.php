@@ -116,7 +116,7 @@ class ConnectUtils
 
 
     /**
-     * Check if the Model has a relation with name $relation returning an instance of Relation or false.
+     *  If the Model has a relation with name $relation will return an instance of Relation or false otherwise.
      *
      * @param Model $model the model 
      * @param String $relation the name of the relation
@@ -149,14 +149,14 @@ class ConnectUtils
      * @param mixed $remove  Model or array of primary keys 
      * @return BOOL if any change was applied to the model
      */
-    public static function updateRelationOnModel($model, $relationName, $add, $remove ){
+    public static function updateRelationOnModel($model, $relationName, $add, $remove){
 
         $relation = ConnectUtils::validateRelation($model, $relationName);
    
         $anyChanges = FALSE;
 
         if(!$relation){
-            return  $anyChanges;
+            return $anyChanges;
         }
 
 
@@ -178,11 +178,11 @@ class ConnectUtils
             $relation instanceof MorphOne || 
             $relation instanceof MorphMany || 
             $relation instanceof MorphToMany) {
-
+                //TODO support morph Relations
         }
-        else  if ($relation instanceof HasOne ||
+        else  if ($relation instanceof HasOne ||  // HasOne is a subclass of  HasOneOrMany can remove
                  $relation instanceof HasOneOrMany || 
-                 $relation instanceof HasMany) { // HasOne is a subclass of use HasOneOrMany
+                 $relation instanceof HasMany) {
             $relation->saveMany($modelsToAdd);
          } 
          elseif ($relation instanceof BelongsTo) {
@@ -208,18 +208,18 @@ class ConnectUtils
             
             $anyChanges = TRUE;
 
-            //add to the relation
+            //remove from the relation
         if ($relation instanceof MorphTo || 
             $relation instanceof MorphOne || 
             $relation instanceof MorphMany || 
             $relation instanceof MorphToMany) {
-
+                //TODO support morph
         }
         else  if ($relation instanceof HasOne ||
                  $relation instanceof HasOneOrMany || 
-                 $relation instanceof HasMany) { // HasOne is a subclass of use HasOneOrMany
-                
-                $relation->saveMany($modelsToRemove);
+                 $relation instanceof HasMany) { 
+                //TODO deal with this
+                //$relation->saveMany($modelsToRemove);
 
          } 
          elseif ($relation instanceof BelongsTo) {
@@ -227,7 +227,6 @@ class ConnectUtils
          }
          elseif ($relation instanceof BelongsToMany) {
              //pull out the model ids and detatch them from the relation
-
              $ids = array_map(function($o) { return $o->getKey(); }, $modelsToRemove);
              $relation->detach($ids);
 
@@ -244,15 +243,20 @@ class ConnectUtils
      * Undocumented function
      *
      * @param Class $modelClass extending Model 
-     * @param mixed $data
+     * @param mixed $data, array of primaryKeys or of arraydata to create new model instances
      * @return void
      */
     private static function modelInstancesFromData($modelClass, $data) {
         
+        //first of all is there anything in data ? 
+        if(empty($data)) {
+            return [];
+        }
+
         $repository = ConnectUtils::repositoryInstanceForModelPath($modelClass->endpointReference());
        
-        //first of all is there anything in data ? 
-        if(empty($data) || $repository == NULL) {
+        //is thre a repository for this model ? 
+        if($repository == NULL) {
             return [];
         }
 

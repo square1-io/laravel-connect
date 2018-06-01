@@ -20,6 +20,7 @@ Route::group(
             function () {
                 Route::get('/current', [ 'uses' => 'AuthController@show', 'as' => 'current']);
                 Route::post('/login', [ 'uses' => 'AuthController@login', 'as' => 'login']);
+                Route::post('/refresh', [ 'uses' => 'AuthController@refresh', 'as' => 'refresh']);
                 Route::post('/reset-password', [ 'uses' => 'AuthController@login', 'as' => 'reset-password']);
                 Route::post('/register', [ 'uses' => 'AuthController@register', 'as' => 'register']);
                 Route::post('/connect', [ 'uses' => 'AuthController@connect', 'as' => 'connect']);

@@ -22,6 +22,18 @@ class AuthController extends ConnectBaseController
     {
         parent::__construct($request);
         
+       
+        //TODO Should have this depending on client? As in separate for iOS, Android 
+        $clientId = env('CONNECT_API_AUTH_CLIENT_ID', '');
+        $grantType = env('CONNECT_API_AUTH_GRANT_TYPE', 'password');
+        $client_secret = env('CONNECT_API_AUTH_CLIENT_SECRET', '');
+        
+        //Never add those to the request from the client but hide this inside the code
+        $request->request->add(['grant_type' => $grantType,
+        'client_id' => $clientId,
+        'client_secret' => $client_secret]);
+
+        
         $authClass = config('connect.api.auth.model');
         $this->authModel = new $authClass;
       
@@ -40,17 +52,20 @@ class AuthController extends ConnectBaseController
     }
 
     /**
-     * Display a listing of the resource.
+     * Login a user with username and password
      *
-     * @return \Illuminate\Http\Response
+     * @return json , with user details and both refresh and auth token
      */
     public function login(ServerRequestInterface $request)
     {
+  
+
         $reference = $this->authModel->endpointReference();
         $statusCode = 500;
         try {
             $token = $this->accessTokenController->issueToken($request);
             $statusCode = $token->getStatusCode();
+            
             $responseBody = json_decode($token->getBody(), true);
             if ($statusCode == 200) {
                 $user = ConnectUtils::getUserForTokenString($responseBody['access_token']);
@@ -70,7 +85,42 @@ class AuthController extends ConnectBaseController
         return response()->connect($data, $statusCode);
     }
 
-
+    /**
+     *  Refresh an auth token
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function refresh(ServerRequestInterface $request)
+    {
+    
+        $currentBody = $request->getParsedBody();
+        $currentBody['grant_type'] = 'refresh_token';
+        $request = $request->withParsedBody($currentBody);
+     
+        $reference = $this->authModel->endpointReference();
+        $statusCode = 500;
+        try {
+            $token = $this->accessTokenController->issueToken($request);
+            $statusCode = $token->getStatusCode();
+            
+            $responseBody = json_decode($token->getBody(), true);
+            if ($statusCode == 200) {
+                $user = ConnectUtils::getUserForTokenString($responseBody['access_token']);
+                $data = array_merge(['reference' => $reference,'user' => $user], $responseBody);
+            } else {
+                $data = $responseBody;
+            }
+        } catch (\ErrorException $error) {
+            $statusCode = 500;
+            $data = ['error' =>['message'=>'something went wrong']];
+        } catch (\Exception $e) {
+            dd($e);
+            $statusCode = 500;
+            $data = ['error' =>['message'=>'something went wrong']];
+        }
+        
+        return response()->connect($data, $statusCode);
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -91,6 +141,7 @@ class AuthController extends ConnectBaseController
         return response()->connect($data);
     }
     
+    //TODO connect account to facebook, google, linkeding ecc... ecc...
     public function connect(Request $request)
     {
     }
