@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 use Laravel\Passport\TokenRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Square1\Laravel\Connect\Traits\InternalConnectScope;
 
 class ConnectUtils
 {
@@ -49,7 +50,11 @@ class ConnectUtils
                 $authClass = config('connect.api.auth.model');
                 $authModel = new $authClass;
                 $repository = static::repositoryInstanceForModelPath($authModel->endpointReference());
+                
+                $authModel::disableModelAccessRestrictions();
                 $user = $repository->show($eloquentToken->user_id);
+                $authModel::enableModelAccessRestrictions();
+
                 return $user;
             }
         

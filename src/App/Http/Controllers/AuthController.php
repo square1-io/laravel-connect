@@ -8,9 +8,11 @@ use InvalidArgumentException;
 use Illuminate\Support\Facades\Auth;
 use Square1\Laravel\Connect\ConnectUtils;
 use Psr\Http\Message\ServerRequestInterface;
+use Square1\Laravel\Connect\Traits\InternalConnectScope;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Square1\Laravel\Connect\App\Http\Controllers\ConnectBaseController;
-use League\OAuth2\Server\Exception\OAuthServerException;
+
 
 class AuthController extends ConnectBaseController
 {
@@ -35,8 +37,10 @@ class AuthController extends ConnectBaseController
 
         
         $authClass = config('connect.api.auth.model');
-        $this->authModel = new $authClass;
-      
+        $this->authModel = new $authClass; 
+        //if there is any restriction on accessging this model we need to remobe it ( for example if user model is accessible only to logged in users)
+        $this->authModel::disableModelAccessRestrictions();
+
         $this->authServer = app()->make('League\OAuth2\Server\AuthorizationServer');
         $this->accessTokenController = $accesstTokenController;
     }
@@ -59,7 +63,6 @@ class AuthController extends ConnectBaseController
     public function login(ServerRequestInterface $request)
     {
   
-
         $reference = $this->authModel->endpointReference();
         $statusCode = 500;
         try {
