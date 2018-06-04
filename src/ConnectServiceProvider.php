@@ -49,6 +49,7 @@ class ConnectServiceProvider extends ServiceProvider
                 return Response::json(
                     [
                     'data' =>  ConnectUtils::formatResponseData($value),
+                    'time' => time(),
                     ],
                     $status
                 );
