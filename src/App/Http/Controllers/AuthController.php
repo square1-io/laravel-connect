@@ -33,7 +33,7 @@ class AuthController extends ConnectBaseController
         //Never add those to the request from the client but hide this inside the code
         $request->request->add(['grant_type' => $grantType,
         'client_id' => $clientId,
-        'client_secret' => $client_secret]);
+        'client_secret' => $client_secret,]);
 
         
         $authClass = config('connect.api.auth.model');
@@ -74,7 +74,19 @@ class AuthController extends ConnectBaseController
                 $user = ConnectUtils::getUserForTokenString($responseBody['access_token']);
                 $data = array_merge(['reference' => $reference,'user' => $user], $responseBody);
             } else {
-                $data = $responseBody;
+                //parse error here 
+                $error = [];
+                if(isset($responseBody['error'])) {
+                    $error['code'] = 403; 
+                    $error['type'] = $responseBody['error']; 
+                }
+                if(isset($responseBody['message'])) {
+                    $error['message'] = $responseBody['message']; 
+                }
+                if(isset($responseBody['hint'])) {
+                    $error['hint'] = $responseBody['hint']; 
+                }
+                $data['error'] = $error;
             }
         } catch (\ErrorException $error) {
             $statusCode = 500;
@@ -111,7 +123,19 @@ class AuthController extends ConnectBaseController
                 $user = ConnectUtils::getUserForTokenString($responseBody['access_token']);
                 $data = array_merge(['reference' => $reference,'user' => $user], $responseBody);
             } else {
-                $data = $responseBody;
+                //parse error here 
+                $error = [];
+                if(isset($responseBody['error'])) {
+                    $error['code'] = 403; 
+                    $error['type'] = $responseBody['error']; 
+                }
+                if(isset($responseBody['message'])) {
+                    $error['message'] = $responseBody['message']; 
+                }
+                if(isset($responseBody['hint'])) {
+                    $error['hint'] = $responseBody['hint']; 
+                }
+                $data['error'] = $error;
             }
         } catch (\ErrorException $error) {
             $statusCode = 500;
